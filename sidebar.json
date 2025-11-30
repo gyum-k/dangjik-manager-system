@@ -1,0 +1,19 @@
+{
+  "menu": [
+    {
+      "label": "대쉬보드",
+      "icon": "./img/svg/home.svg",
+      "link": "/index.html"
+    },
+    {
+      "label": "전화번호부",
+      "icon": "./img/svg/phone.svg",
+      "link": "/phone-book"
+    },
+    {
+      "label": "게시판",
+      "icon": "./img/svg/board.svg",
+      "link": "/board"
+    }
+  ]
+}
