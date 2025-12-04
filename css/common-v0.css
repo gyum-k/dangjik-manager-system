@@ -1,0 +1,87 @@
+@charset "utf-8";
+
+/* 육사교 - 당직 관리 시스템 공통 CSS */
+
+:root {
+    --sidebar-width:240px;
+    --sidebar-collapsed:72px;
+}
+
+img {
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+/*********************** 헤더 영역 ***********************/
+#site-header {
+  position: fixed;
+  width: 100%;
+  white-space: nowrap;
+  z-index: 9999;
+}
+
+#site-header .container {
+    display: flex;
+    justify-content: space-between;
+    height: 60px;
+    margin: 0 auto;
+    padding: 0 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+#site-header .container .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#site-header .container .header-left .ham-btn {
+    cursor: pointer;
+}
+
+/*********************** 사이드바 영역 ***********************/
+#site-sidebar {
+    position: relative;
+    width: var(--sidebar-width);
+    min-height: calc(100vh - 60px);
+    background: var(--panel);
+    transition: width .22s ease;
+    border-right: 1px solid #ddd;
+    overflow: hidden;
+    top: 60px;
+}
+
+#site-sidebar.collapsed{
+    width:var(--sidebar-collapsed)
+}
+
+#site-sidebar .nav {
+    padding: 10px 4px;
+}
+
+#site-sidebar .nav .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin: 6px 8px;
+    cursor: pointer;
+    color: var(--text);
+}
+
+#site-sidebar .nav .nav-item:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+#site-sidebar .nav .nav-item img {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+}
+
+#site-sidebar .nav-item .label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
