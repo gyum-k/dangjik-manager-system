@@ -1,18 +1,21 @@
 {
   "menu": [
     {
+      "id": "dms-v1",
       "label": "대쉬보드",
-      "icon": "./img/svg/home.svg",
+      "icon": "./img/svg/dashboard.svg",
       "link": "/index.html"
     },
     {
+      "id": "dms-v2",
       "label": "전화번호부",
-      "icon": "./img/svg/phone.svg",
+      "icon": "./img/svg/hamburger.svg",
       "link": "/phone-book"
     },
     {
+      "id": "dms-v3",
       "label": "게시판",
-      "icon": "./img/svg/board.svg",
+      "icon": "./img/svg/hamburger.svg",
       "link": "/board"
     }
   ]
