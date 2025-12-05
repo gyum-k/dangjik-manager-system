@@ -13,17 +13,30 @@
     <header id="site-header">
         <div class="container">
             <div class="header-left">
-                <div class="ham-btn" id="btnToggle">
+                <div class="ham-btn" id="btn-toggle">
                     <img src="./img/svg/hamburger.svg" />
                 </div>
                 <a href="/" class="brand" aria-label="육사교 당직 관리 시스템 홈">
                     <img class="logo logo-dark" src="./img/svg/logo.svg" alt="BlueCanvas" height="28">
                 </a>
             </div>
+            <div class="header-right">
+                <div class="profile">
+                    <div class="avatar">김</div>
+                     <div style="display:flex;flex-direction:column;text-align:right; align-items:center; gap:2px;">
+                        <div style="font-size:14px;font-weight:600">김규민</div>
+                        <div style="font-size:12px;color:var(--muted)">일병</div>
+                    </div>
+                </div>
+                <div class="dark-toggle">
+                    <!-- <img src="./img/svg/bright.svg" alt="다크모드 토글" width="25px" height="25px"/> -->
+                    <img src="./img/svg/moon.svg" alt="다크모드 토글" width="24px" height="24px"/>
+                </div>
+            </div>
         </div>
     </header>
 
-    <aside id="site-sidebar">
+    <aside class="collapsed" id="site-sidebar">
         <nav class="nav" id="nav"></nav>
     </aside>
 </body>
