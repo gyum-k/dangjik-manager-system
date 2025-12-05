@@ -5,6 +5,7 @@
 :root {
     --sidebar-width:240px;
     --sidebar-collapsed:72px;
+    --muted:#6b7280;
 }
 
 img {
@@ -29,19 +30,47 @@ img {
     border-bottom: 1px solid #ddd;
 }
 
-#site-header .container .header-left {
+#site-header .container .header-left,
+#site-header .container .header-right {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 24px;
 }
 
 #site-header .container .header-left .ham-btn {
+    padding: 4px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#site-header .container .header-right .profile {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 8px;
+    border-radius:8px;
+    cursor:pointer
+}
+
+#site-header .container .header-right .profile .avatar {
+    width:36px;
+    height:36px;
+    border-radius:999px;
+    background:linear-gradient(135deg,#34d399,#60a5fa);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-weight:700
+}
+
+#site-header .container .header-right .dark-toggle {
     cursor: pointer;
 }
 
 /*********************** 사이드바 영역 ***********************/
 #site-sidebar {
-    position: relative;
+    position: fixed;
     width: var(--sidebar-width);
     min-height: calc(100vh - 60px);
     background: var(--panel);
