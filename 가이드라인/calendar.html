@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>로컬스토리지 캘린더 (추가/수정/삭제)</title>
+  <style>
+    :root{font-family:Inter, Arial, Helvetica, sans-serif}
+    body{margin:0;padding:20px;background:#f4f6f8;color:#111}
+    .wrap{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    h1{font-size:18px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    button{padding:8px 10px;border-radius:8px;border:1px solid #d0d7de;background:#fff;cursor:pointer}
+    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+    .dow{background:#eef1f5;padding:8px;border-radius:6px;text-align:center;font-weight:600}
+    .day{background:#fff;min-height:100px;padding:8px;border-radius:6px;border:1px solid #e6eaef;position:relative}
+    .day .date-num{font-size:12px;font-weight:700}
+    .day.other-month{opacity:0.4}
+    .events{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+    .event{background:#f0f7ff;padding:4px 6px;border-radius:6px;font-size:12px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .footer{margin-top:14px;display:flex;gap:8px;align-items:center}
+    /* 모달 */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:none;align-items:center;justify-content:center}
+    .modal{background:#fff;padding:16px;border-radius:10px;min-width:320px;box-shadow:0 8px 30px rgba(2,6,23,0.2)}
+    .modal label{display:block;font-size:13px;margin-top:8px}
+    .modal input[type=text],.modal textarea,.modal input[type=time]{width:100%;padding:8px;border-radius:8px;border:1px solid #d8dee7}
+    .modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .small{font-size:12px;color:#666}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>로컬스토리지 캘린더</h1>
+      <div class="controls">
+        <button id="prevBtn">◀</button>
+        <div id="titleMonth">2025년 12월</div>
+        <button id="nextBtn">▶</button>
+        <button id="todayBtn">오늘</button>
+        <button id="exportBtn">내보내기 (JSON)</button>
+        <button id="clearBtn">전체삭제</button>
+      </div>
+    </header>
+
+    <div class="calendar" id="calendar">
+      <!-- 요일 헤더 -->
+    </div>
+
+    <div class="footer">
+      <div class="small">※ 날짜 클릭: 일정 추가, 일정 클릭: 수정 / 삭제</div>
+    </div>
+  </div>
+
+  <!-- 모달 -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3 id="modalTitle">일정 추가</h3>
+      <form id="eventForm">
+        <label>날짜</label>
+        <input type="text" id="eventDate" readonly />
+        <label>시간</label>
+        <input type="time" id="eventTime" />
+        <label>제목</label>
+        <input type="text" id="eventTitle" required />
+        <label>설명</label>
+        <textarea id="eventDesc" rows="3"></textarea>
+
+        <div class="actions">
+          <button type="button" id="deleteBtn" style="display:none;background:#ffefef;border-color:#ffbbbb">삭제</button>
+          <button type="button" id="cancelBtn">취소</button>
+          <button type="submit" id="saveBtn">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 로컬스토리지 키
+    const STORAGE_KEY = 'calendarEvents_v1';
+
+    // 현재 표시 중인 연/월
+    let current = new Date();
+    // 편집 중인 이벤트 id (없으면 새로 추가)
+    let editingId = null;
+
+    // 불러오기
+    function loadEvents(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      try{
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){
+        console.error('파싱 실패', e);
+        return [];
+      }
+    }
+    // 저장하기
+    function saveEvents(list){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    // 이벤트 생성 id (간단히 시간기반 + 랜덤)
+    function genId(){
+      return 'e_' + Date.now().toString(36) + '_' + Math.floor(Math.random()*1000).toString(36);
+    }
+
+    // 캘린더 렌더링
+    function renderCalendar(date){
+      const year = date.getFullYear();
+      const month = date.getMonth(); // 0-based
+
+      document.getElementById('titleMonth').textContent = `${year}년 ${month+1}월`;
+
+      const calendarEl = document.getElementById('calendar');
+      calendarEl.innerHTML = '';
+
+      const dows = ['일','월','화','수','목','금','토'];
+      // 요일 헤더
+      for(const d of dows){
+        const el = document.createElement('div');
+        el.className = 'dow';
+        el.textContent = d;
+        calendarEl.appendChild(el);
+      }
+
+      // 그 달의 1일과 마지막
+      const first = new Date(year, month, 1);
+      const last = new Date(year, month+1, 0);
+
+      // 달력은 주 단위(일~토)로 표현. 시작은 첫 주의 일요일
+      const start = new Date(first);
+      start.setDate(first.getDate() - first.getDay());
+      const end = new Date(last);
+      end.setDate(last.getDate() + (6 - last.getDay()));
+
+      const events = loadEvents();
+
+      for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day';
+        // 다른 달이면 희미하게
+        if(d.getMonth() !== month) dayEl.classList.add('other-month');
+
+        const isoDate = d.toISOString().slice(0,10); // YYYY-MM-DD
+        const dateNum = document.createElement('div');
+        dateNum.className = 'date-num';
+        dateNum.textContent = d.getDate();
+        dayEl.appendChild(dateNum);
+
+        // 이벤트 목록
+        const evWrap = document.createElement('div');
+        evWrap.className = 'events';
+
+        const todays = events.filter(ev => ev.date === isoDate).sort((a,b)=> (a.time||'') > (b.time||'') ? 1 : -1);
+        for(const ev of todays){
+          const evEl = document.createElement('div');
+          evEl.className = 'event';
+          evEl.textContent = (ev.time? ev.time + ' ' : '') + ev.title;
+          evEl.title = ev.title + '\n' + (ev.time||'') + '\n' + (ev.desc||'');
+          evEl.addEventListener('click', (e)=>{
+            e.stopPropagation();
+            openModal(isoDate, ev.id);
+          });
+          evWrap.appendChild(evEl);
+        }
+
+        dayEl.appendChild(evWrap);
+
+        // 날짜 클릭 시 새 일정 추가
+        dayEl.addEventListener('click', ()=> openModal(isoDate));
+
+        calendarEl.appendChild(dayEl);
+      }
+    }
+
+    // 모달 열기
+    function openModal(dateStr, id=null){
+      editingId = id;
+      const modal = document.getElementById('modalBackdrop');
+      const title = document.getElementById('modalTitle');
+      const inputDate = document.getElementById('eventDate');
+      const inputTime = document.getElementById('eventTime');
+      const inputTitle = document.getElementById('eventTitle');
+      const inputDesc = document.getElementById('eventDesc');
+      const deleteBtn = document.getElementById('deleteBtn');
+
+      inputDate.value = dateStr;
+      inputTime.value = '';
+      inputTitle.value = '';
+      inputDesc.value = '';
+
+      const events = loadEvents();
+      if(id){
+        const ev = events.find(x=>x.id === id);
+        if(ev){
+          title.textContent = '일정 수정';
+          inputTime.value = ev.time || '';
+          inputTitle.value = ev.title || '';
+          inputDesc.value = ev.desc || '';
+          deleteBtn.style.display = 'inline-block';
+        }
+      }else{
+        title.textContent = '일정 추가';
+        deleteBtn.style.display = 'none';
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    // 모달 닫기
+    function closeModal(){
+      document.getElementById('modalBackdrop').style.display = 'none';
+      editingId = null;
+    }
+
+    // 저장 처리
+    document.getElementById('eventForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+      const title = document.getElementById('eventTitle').value.trim();
+      const desc = document.getElementById('eventDesc').value.trim();
+
+      if(!title){
+        alert('제목을 입력하세요.');
+        return;
+      }
+
+      const events = loadEvents();
+
+      if(editingId){
+        // 수정
+        const idx = events.findIndex(x=>x.id === editingId);
+        if(idx>-1){
+          events[idx].date = date;
+          events[idx].time = time;
+          events[idx].title = title;
+          events[idx].desc = desc;
+        }
+      } else {
+        // 추가
+        const ev = { id: genId(), date, time, title, desc };
+        events.push(ev);
+      }
+
+      saveEvents(events);
+      closeModal();
+      renderCalendar(current);
+    });
+
+    // 삭제 버튼
+    document.getElementById('deleteBtn').addEventListener('click', ()=>{
+      if(!editingId) return;
+      if(!confirm('이 일정을 삭제하시겠습니까?')) return;
+      const events = loadEvents().filter(x=>x.id !== editingId);
+      saveEvents(events);
+      closeModal();
+      renderCalendar(current);
+    });
+
+    // 취소
+    document.getElementById('cancelBtn').addEventListener('click', ()=>{
+      closeModal();
+    });
+
+    // 이전/다음/오늘
+    document.getElementById('prevBtn').addEventListener('click', ()=>{
+      current.setMonth(current.getMonth()-1);
+      renderCalendar(current);
+    });
+    document.getElementById('nextBtn').addEventListener('click', ()=>{
+      current.setMonth(current.getMonth()+1);
+      renderCalendar(current);
+    });
+    document.getElementById('todayBtn').addEventListener('click', ()=>{
+      current = new Date();
+      renderCalendar(current);
+    });
+
+    // 내보내기( JSON )
+    document.getElementById('exportBtn').addEventListener('click', ()=>{
+      const events = loadEvents();
+      const win = window.open('', '_blank');
+      win.document.body.textContent = JSON.stringify(events, null, 2);
+    });
+
+    // 전체삭제
+    document.getElementById('clearBtn').addEventListener('click', ()=>{
+      if(confirm('모든 일정을 삭제하시겠습니까?')){
+        localStorage.removeItem(STORAGE_KEY);
+        renderCalendar(current);
+      }
+    });
+
+    // 초기화 및 렌더
+    renderCalendar(current);
+
+    // 키보드 ESC로 모달 닫기
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
