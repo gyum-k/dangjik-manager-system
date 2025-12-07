@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>육사교 - 당직 관리 시스템</title>
+  <link rel="icon" href="./favicon/favicon.ico" />
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./v-0.css" />
+  <script src="./v-0.js"></script>
+</head>
+<body>
+  <div id="site-container">
+    <header id="site-header">
+      <div class="header-left">
+        <button class="sidebar-toggle">
+          <img src="./img/svg/hamburger-icon.svg" />
+        </button>
+        <a href="/" class="brand" aria-label="육사교 당직 관리 시스템 홈" style="display: flex;">
+            <img class="logo logo-dark" src="./img/svg/logo.svg" alt="육사교 당직 관리 시스템 로고" height="28">
+        </a>
+      </div>
+      <div class="header-right">
+        <div class="profile">
+            <button class="icon-button">
+              <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">김</div>
+            </button>
+            <div class="profile-content">
+                <div class="profile-text">김규민</div>
+                <div class="profile-rank">일병</div>
+            </div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <img class="sun-icon" src="./img/svg/sun-icon.svg" alt="라이트 모드">
+          <img class="moon-icon" src="./img/svg/moon-icon.svg" alt="다크 모드">
+        </button>
+      </div>
+    </header>
+
+    <div class="container-body">
+      <aside class="collapsed" id="site-sidebar">
+        <nav class="sidebar-nav">
+          <ul></ul>
+        </nav>
+      </aside>
+
+      <div id="main-content">
+        <main class="content">
+          <div class="content-header">
+            <h1>Dashboard Overview</h1>
+            <div class="header-controls">
+              <button class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export
+              </button>
+              <div class="tabs">
+                <button class="tab active">Day</button>
+                <button class="tab">Week</button>
+                <button class="tab">Month</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Total Revenue</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="card-value">$45,231.89</div>
+              <p class="card-change">+20.1% from last month</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Subscriptions</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="card-value">+2,350</div>
+              <p class="card-change">+180.1% from last month</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Active Users</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              </div>
+              <div class="card-value">+12,234</div>
+              <p class="card-change">+19% from last month</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Conversion Rate</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
+              </div>
+              <div class="card-value">24.5%</div>
+              <p class="card-change">+4.3% from last month</p>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="card">
+              <div class="chart-header">
+                <h3>Revenue Over Time</h3>
+                <p class="chart-description">Monthly revenue for the current year</p>
+              </div>
+              <div class="bar-chart" id="barChart"></div>
+              <div class="chart-labels">
+                <span>Jan</span>
+                <span>Feb</span>
+                <span>Mar</span>
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+                <span>Aug</span>
+                <span>Sep</span>
+                <span>Oct</span>
+                <span>Nov</span>
+                <span>Dec</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="chart-header">
+                <h3>Traffic Sources</h3>
+                <p class="chart-description">Distribution of traffic by source</p>
+              </div>
+              <div class="pie-chart-container">
+                <div class="pie-chart"></div>
+              </div>
+              <div class="legend">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(222.2, 47.4%, 11.2%);"></div>
+                  <span>Organic (40%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 17.5%);"></div>
+                  <span>Direct (30%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 27.5%);"></div>
+                  <span>Referral (20%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 37.5%);"></div>
+                  <span>Social (10%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="chart-header">
+              <h3>Recent Activity</h3>
+              <p class="chart-description">Your latest account activity</p>
+            </div>
+            <div id="activityList"></div>
+            <div class="card-footer">
+              <button class="btn btn-full">View All Activity</button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function initTheme() {
+      // Check if user has a saved theme preference in localStorage
+      const savedTheme = localStorage.getItem('dms.theme');
+      
+      if (savedTheme) {
+        // Apply saved theme
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else {
+        // Check system preference if no saved theme
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = prefersDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('dms.theme', theme);
+      }
+    }
+
+    /**
+     * Toggle between light and dark themes
+     * Saves preference to localStorage for persistence
+     */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      // Apply new theme to html element
+      html.setAttribute('data-theme', newTheme);
+      
+      // Save preference to localStorage
+      localStorage.setItem('dms.theme', newTheme);
+      
+      console.log('[v0] Theme toggled to:', newTheme);
+    }
+
+    // Initialize theme on page load
+    initTheme();
+    // Tab Switching -- Not modified
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Generate bar chart
+    const barChart = document.getElementById('barChart');
+    const revenueData = [20000, 25000, 18000, 32000, 28000, 35000, 40000, 38000, 42000, 45000, 41000, 48000];
+    const maxRevenue = Math.max(...revenueData);
+
+    revenueData.forEach(revenue => {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = `${(revenue / maxRevenue) * 100}%`;
+      bar.title = `$${revenue.toLocaleString()}`; // Added title attribute for tooltip
+      barChart.appendChild(bar);
+    });
+
+    // Generate activity list
+    const activities = [
+      { action: 'New user registration', time: '5 minutes ago' },
+      { action: 'Payment received', time: '12 minutes ago' },
+      { action: 'New project created', time: '1 hour ago' },
+      { action: 'User subscription upgraded', time: '2 hours ago' },
+      { action: 'Bug report submitted', time: '3 hours ago' }
+    ];
+
+    const activityList = document.getElementById('activityList');
+    activities.forEach(activity => {
+      const item = document.createElement('div');
+      item.className = 'activity-item';
+      item.innerHTML = `
+        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <div class="activity-content">
+          <p>${activity.action}</p>
+          <small>${activity.time}</small>
+        </div>
+      `;
+      activityList.appendChild(item);
+    });
+  </script>
+</body>
+</html>

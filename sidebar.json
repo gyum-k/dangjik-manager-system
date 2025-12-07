@@ -2,21 +2,39 @@
   "menu": [
     {
       "id": "dms-v1",
-      "label": "대쉬보드",
-      "icon": "./img/svg/dashboard.svg",
+      "label": "Home",
+      "icon": "./img/svg/home-icon.svg",
       "link": "/index.html"
     },
     {
       "id": "dms-v2",
-      "label": "전화번호부",
-      "icon": "./img/svg/hamburger.svg",
-      "link": "/phone-book"
+      "label": "Analytics",
+      "icon": "./img/svg/analytic-icon.svg",
+      "link": "/"
     },
     {
       "id": "dms-v3",
-      "label": "게시판",
-      "icon": "./img/svg/hamburger.svg",
-      "link": "/board"
+      "label": "Projects",
+      "icon": "./img/svg/project-icon.svg",
+      "link": "/"
+    },
+    {
+      "id": "dms-v4",
+      "label": "Calendar",
+      "icon": "./img/svg/calendar-icon.svg",
+      "link": "/"
+    },
+    {
+      "id": "dms-v5",
+      "label": "Payments",
+      "icon": "./img/svg/payment-icon.svg",
+      "link": "/"
+    },
+    {
+      "id": "dms-v6",
+      "label": "Settings",
+      "icon": "./img/svg/setting-icon.svg",
+      "link": "/"
     }
   ]
 }
