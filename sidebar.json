@@ -2,37 +2,37 @@
   "menu": [
     {
       "id": "dms-v1",
-      "label": "Home",
+      "label": "홈",
       "icon": "./img/svg/home-icon.svg",
       "link": "/index.html"
     },
     {
       "id": "dms-v2",
-      "label": "Analytics",
+      "label": "통계",
       "icon": "./img/svg/analytic-icon.svg",
       "link": "/"
     },
     {
       "id": "dms-v3",
-      "label": "Projects",
+      "label": "프로젝트",
       "icon": "./img/svg/project-icon.svg",
       "link": "/"
     },
     {
       "id": "dms-v4",
-      "label": "Calendar",
+      "label": "캘린더",
       "icon": "./img/svg/calendar-icon.svg",
       "link": "/"
     },
     {
       "id": "dms-v5",
-      "label": "Payments",
+      "label": "결재",
       "icon": "./img/svg/payment-icon.svg",
       "link": "/"
     },
     {
       "id": "dms-v6",
-      "label": "Settings",
+      "label": "설정",
       "icon": "./img/svg/setting-icon.svg",
       "link": "/"
     }
