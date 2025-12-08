@@ -7,6 +7,7 @@
   <link rel="icon" href="./favicon/favicon.ico" />
   <link rel="stylesheet" href="./css/reset.css" />
   <link rel="stylesheet" href="./v-0.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
   <script src="./v-0.js"></script>
 </head>
 <body>
@@ -17,7 +18,7 @@
           <img src="./img/svg/hamburger-icon.svg" />
         </button>
         <a href="/" class="brand" aria-label="육사교 당직 관리 시스템 홈" style="display: flex;">
-            <img class="logo logo-dark" src="./img/svg/logo.svg" alt="육사교 당직 관리 시스템 로고" height="28">
+            <img class="logo" src="./img/svg/logo.svg" alt="육사교 당직 관리 시스템 로고" height="28">
         </a>
       </div>
       <div class="header-right">
@@ -30,9 +31,9 @@
                 <div class="profile-rank">일병</div>
             </div>
         </div>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-          <img class="sun-icon" src="./img/svg/sun-icon.svg" alt="라이트 모드">
-          <img class="moon-icon" src="./img/svg/moon-icon.svg" alt="다크 모드">
+        <button class="theme-toggle" aria-label="Toggle dark mode">
+          <img class="sun-icon" src="./img/svg/sun-icon.svg" alt="Light Theme">
+          <img class="moon-icon" src="./img/svg/moon-icon.svg" alt="Dark Theme">
         </button>
       </div>
     </header>
@@ -164,42 +165,6 @@
   </div>
 
   <script>
-    function initTheme() {
-      // Check if user has a saved theme preference in localStorage
-      const savedTheme = localStorage.getItem('dms.theme');
-      
-      if (savedTheme) {
-        // Apply saved theme
-        document.documentElement.setAttribute('data-theme', savedTheme);
-      } else {
-        // Check system preference if no saved theme
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = prefersDark ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('dms.theme', theme);
-      }
-    }
-
-    /**
-     * Toggle between light and dark themes
-     * Saves preference to localStorage for persistence
-     */
-    function toggleTheme() {
-      const html = document.documentElement;
-      const currentTheme = html.getAttribute('data-theme') || 'light';
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      
-      // Apply new theme to html element
-      html.setAttribute('data-theme', newTheme);
-      
-      // Save preference to localStorage
-      localStorage.setItem('dms.theme', newTheme);
-      
-      console.log('[v0] Theme toggled to:', newTheme);
-    }
-
-    // Initialize theme on page load
-    initTheme();
     // Tab Switching -- Not modified
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', function() {

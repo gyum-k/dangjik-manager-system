@@ -6,6 +6,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Noto Sans KR", sans-serif;
 }
 
 :root {
@@ -61,8 +62,7 @@ html, body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; */
   background: var(--bg-muted);
   color: var(--text-primary);
   line-height: 1.6;
@@ -99,6 +99,10 @@ body {
   gap: 1rem;
 }
 
+#site-header .header-left .logo {
+  content: url("./img/svg/logo.svg");
+}
+
 #site-header .header-left h1 {
   font-size: 1.25rem;
   font-weight: 700;
@@ -115,9 +119,15 @@ body {
   transition: background 0.2s;
 }
 
+[data-theme="dark"] #site-header .header-left .logo {
+  content: url("./img/svg/logo-dark.svg");
+}
+
 [data-theme="dark"] #site-header .header-left .sidebar-toggle {
   filter: invert(100%);
 } 
+
+
 
 #site-header .header-right {
   display: flex;
@@ -150,6 +160,7 @@ body {
 #site-header .header-right .profile .profile-content .profile-text {
     font-size: 14px;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 #site-header .header-right .profile .profile-content .profile-rank {
@@ -191,6 +202,7 @@ body {
 
 [data-theme="dark"] .theme-toggle .moon-icon {
   display: block;
+  filter: invert(100%);
 }
 
 
@@ -259,6 +271,12 @@ body {
   height: 20px;
   margin-right: 0.5rem;
   flex-shrink: 0;
+}
+
+#site-sidebar .sidebar-nav li .nav-button .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 [data-theme="dark"] #site-sidebar .sidebar-nav li .nav-button img {
