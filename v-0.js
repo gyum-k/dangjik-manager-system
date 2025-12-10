@@ -28,6 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('dms.theme', theme);
   })
+
+  // 프로필 드롭다운 구현
+  const profileToggle = document.querySelector('.profile-toggle');
+
+  profileToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const dropdown = document.getElementById('profile-dropdown');
+    dropdown.classList.toggle('open');
+  })
   
   // 사이드바 토글
   const sidebarToggle = document.querySelector('.sidebar-toggle');

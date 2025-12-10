@@ -2,36 +2,24 @@
   "menu": [
     {
       "id": "dms-v1",
-      "label": "홈",
-      "icon": "./img/svg/home-icon.svg",
-      "link": "/index.html"
-    },
-    {
-      "id": "dms-v2",
-      "label": "통계",
+      "label": "대쉬보드",
       "icon": "./img/svg/analytic-icon.svg",
       "link": "/"
     },
     {
-      "id": "dms-v3",
-      "label": "프로젝트",
-      "icon": "./img/svg/project-icon.svg",
-      "link": "/"
-    },
-    {
-      "id": "dms-v4",
+      "id": "dms-v2",
       "label": "캘린더",
       "icon": "./img/svg/calendar-icon.svg",
       "link": "/"
     },
     {
-      "id": "dms-v5",
-      "label": "결재",
-      "icon": "./img/svg/payment-icon.svg",
+      "id": "dms-v3",
+      "label": "앱",
+      "icon": "./img/svg/project-icon.svg",
       "link": "/"
     },
     {
-      "id": "dms-v6",
+      "id": "dms-v4",
       "label": "설정",
       "icon": "./img/svg/setting-icon.svg",
       "link": "/"

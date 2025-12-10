@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Light theme variables (default) */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-muted: #f1f3f5;
+      --border: #e9ecef;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --text-muted: #adb5bd;
+      --accent: hsl(222.2, 47.4%, 11.2%);
+      --accent-light: hsl(217.2, 32.6%, 17.5%);
+      --primary: hsl(222.2, 47.4%, 11.2%);
+      --radius: 8px;
+      --sidebar-width: 256px;
+      --sidebar-collapsed: 80px;
+      --header-height: 64px;
+    }
+
+    /* Dark theme variables - applied when [data-theme="dark"] is set on html element */
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #242424;
+      --bg-muted: #2a2a2a;
+      --border: #404040;
+      --text-primary: #e5e5e5;
+      --text-secondary: #a3a3a3;
+      --text-muted: #737373;
+      --accent: hsl(222.2, 47.4%, 70%);
+      --accent-light: hsl(217.2, 32.6%, 60%);
+      --primary: hsl(222.2, 47.4%, 70%);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-muted);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Modified layout structure so header spans full width and sidebar is positioned below it */
+    .dashboard {
+      display: flex;
+      flex-direction: column; /* Changed */
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      height: var(--header-height); /* Changed */
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed; /* Added */
+      top: 0; /* Added */
+      left: 0; /* Added */
+      right: 0; /* Added */
+      z-index: 50; /* Added */
+      gap: 1rem; /* Added gap for spacing between elements */
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Added header left section for hamburger and title */
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-left h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    /* Modified sidebar-toggle to work in header */
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      transition: background 0.2s;
+    }
+
+    /* Created new dashboard-body wrapper to contain sidebar and main content below header */
+    .dashboard-body {
+      display: flex;
+      margin-top: var(--header-height);
+      min-height: calc(100vh - var(--header-height));
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-primary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s ease;
+      height: calc(100vh - var(--header-height)); /* Added */
+      position: sticky; /* Added */
+      top: var(--header-height); /* Added */
+    }
+
+    .sidebar.collapsed {
+      width: var(--sidebar-collapsed);
+    }
+
+    /* Removed sidebar-header as title moved to main header */
+    .sidebar-header {
+      display: none;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .sidebar-nav ul {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0.625rem 0.75rem;
+      background: none;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: background 0.2s;
+      text-align: left;
+    }
+
+    .nav-button:hover {
+      background: var(--bg-muted);
+    }
+
+    .nav-button svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .sidebar.collapsed .nav-button {
+      justify-content: center;
+    }
+
+    .sidebar.collapsed .nav-button span {
+      display: none;
+    }
+
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .user-details {
+      margin-left: 0.75rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar.collapsed .user-details {
+      opacity: 0;
+      display: none;
+    }
+
+    .user-details p {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .user-details small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .search-container {
+      position: relative;
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-secondary);
+      font-size: 0.875rem;
+    }
+
+    .search-container svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Added dark mode toggle button styles */
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      color: var(--text-primary);
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-secondary);
+      transform: scale(1.05);
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Hide moon icon in light mode, show in dark mode */
+    .theme-toggle .moon-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .sun-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .moon-icon {
+      display: block;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--bg-muted);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .icon-button:hover {
+      background: var(--bg-muted);
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* Added profile dropdown styles */
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s;
+      color: var(--text-primary);
+    }
+
+    .profile-button:hover {
+      background: var(--bg-muted);
+    }
+
+    /* Arrow icon that rotates when dropdown is open */
+    .profile-button .arrow-icon {
+      transition: transform 0.2s;
+    }
+
+    .profile-dropdown.open .profile-button .arrow-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Dropdown menu container */
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      min-width: 200px;
+      padding: 0.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+      z-index: 100;
+    }
+
+    /* Show dropdown when open */
+    .profile-dropdown.open .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Dropdown section header */
+    .dropdown-section {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Dropdown menu items */
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: var(--bg-muted);
+    }
+
+    /* Active/selected profile */
+    .dropdown-item.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .dropdown-item.active:hover {
+      background: var(--accent);
+      opacity: 0.9;
+    }
+
+    .dropdown-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Divider between sections */
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0.5rem 0;
+    }
+
+    /* Small avatar in dropdown items */
+    .dropdown-item .avatar {
+      width: 28px;
+      height: 28px;
+      font-size: 0.7rem;
+    }
+
+    /* Main Content Area */
+    .content {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .content-header h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--bg-muted);
+      border-radius: var(--radius);
+      padding: 4px;
+    }
+
+    .tab {
+      padding: 0.375rem 0.75rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: calc(var(--radius) - 2px);
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+
+    .tab.active {
+      background: var(--bg-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-primary);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    [data-theme="dark"] .card {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .card-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+    }
+
+    .card-value {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-change {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-header {
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .chart-header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .chart-description {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      height: 300px;
+      padding: 1rem 0;
+    }
+
+    .bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 4px 4px 0 0;
+      transition: opacity 0.3s;
+      opacity: 0.9;
+    }
+
+    .bar:hover {
+      opacity: 1;
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pie-chart-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      margin-bottom: 1rem;
+    }
+
+    .pie-chart {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--accent) 0deg 144deg,
+        hsl(217.2, 32.6%, 17.5%) 144deg 252deg,
+        hsl(217.2, 32.6%, 27.5%) 252deg 324deg,
+        hsl(217.2, 32.6%, 37.5%) 324deg 360deg
+      );
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+
+    /* Activity Table */
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-content p {
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-content small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .card-footer {
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -100%;
+        z-index: 100;
+        height: 100vh;
+        top: 0; /* Added */
+        margin-top: 0; /* Added */
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .search-container {
+        display: none;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Added phone book styles */
+    .phonebook-card {
+      margin-bottom: 1.5rem;
+    }
+
+    .phonebook-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .view-btn {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .view-btn:hover {
+      background: var(--bg-muted);
+    }
+
+    .view-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .phonebook-search {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .phonebook-search input {
+      width: 100%;
+      padding: 0.625rem 0.75rem 0.625rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .phonebook-search svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+    }
+
+    /* Updated traditional card view styles */
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .contact-item:hover {
+      background: var(--bg-muted);
+    }
+
+    .contact-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-name {
+      font-weight: 500;
+      font-size: 0.875rem;
+      margin-bottom: 0.125rem;
+    }
+
+    .contact-affiliation {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-details {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .contact-phone, .contact-ext {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* Added table view styles */
+    .contact-table-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .contact-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .contact-table thead {
+      position: sticky;
+      top: 0;
+      background: var(--bg-muted);
+      z-index: 1;
+    }
+
+    .contact-table th {
+      text-align: left;
+      padding: 0.75rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .contact-table td {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contact-table tbody tr {
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .contact-table tbody tr:hover {
+      background: var(--bg-muted);
+    }
+
+    .contact-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table-affiliation {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Added calendar styles */
+    .calendar-card {
+      margin-bottom: 1.5rem;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .calendar-nav button {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.375rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .calendar-nav button:hover {
+      background: var(--bg-muted);
+    }
+
+    .calendar-nav button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .calendar-month {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+    }
+
+    /* CALENDAR DAY STYLES START */
+    .calendar-day {
+      min-height: 80px;
+      padding: 8px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      /* Added vertical alignment to top */
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .calendar-day:hover {
+      background: var(--bg-secondary);
+      border-color: var(--accent);
+    }
+
+    /* Adjusted day number styling */
+    .calendar-day-number {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .calendar-day.other-month {
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+    }
+
+    .calendar-day.today {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    [data-theme="dark"] .calendar-day.today {
+      background: rgba(147, 197, 253, 0.2);
+    }
+
+    .calendar-day.selected {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Updated has-events indicator to be more subtle */
+    .calendar-day.has-events::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* Added event item styles for calendar */
+    .calendar-event-item {
+      font-size: 11px;
+      padding: 2px 4px;
+      background: var(--accent);
+      color: white;
+      border-radius: 3px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .calendar-event-item:nth-child(3) {
+      background: var(--accent-light); /* Adjusted for better contrast */
+    }
+
+    .calendar-event-item:nth-child(4) {
+      background: hsl(217.2, 32.6%, 27.5%); /* Example color, adjust as needed */
+    }
+
+    .calendar-event-more {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .calendar-day.selected .calendar-event-item,
+    .calendar-day.selected .calendar-event-more {
+      opacity: 0.9;
+    }
+
+    .calendar-day.selected .calendar-event-more {
+      color: white;
+    }
+    /* CALENDAR DAY STYLES END */
+
+    /* Added styles for event indicators and modal */
+    .event-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .event-modal.active {
+      display: flex;
+    }
+
+    .event-modal-content {
+      background: var(--bg-primary);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    [data-theme="dark"] .event-modal-content {
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    .event-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .event-modal-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+    }
+
+    .close-modal:hover {
+      background: var(--bg-muted);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 0.875rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .event-list {
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .event-item {
+      padding: 0.75rem;
+      background: var(--bg-muted);
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .event-info h4 {
+      margin: 0 0 0.25rem 0;
+      font-size: 0.875rem;
+    }
+
+    .event-info p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .event-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .event-actions button:hover {
+      background: var(--bg-primary);
+    }
+
+    .event-actions button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .modal-actions button {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header moved outside dashboard body to span full width -->
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <h1>Dashboard</h1>
+      </div>
+      <div class="search-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" placeholder="Search...">
+      </div>
+      <div class="header-actions">
+        <!-- Added dark mode toggle button -->
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <!-- Sun icon for light mode -->
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <!-- Moon icon for dark mode -->
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+
+        <button class="btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          <span>New Project</span>
+        </button>
+        <button class="icon-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+          </svg>
+          <span class="notification-dot"></span>
+        </button>
+        
+        <!-- Replaced profile icon button with dropdown -->
+        <div class="profile-dropdown" id="profileDropdown">
+          <button class="profile-button" onclick="toggleProfileDropdown(event)">
+            <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">JD</div>
+            <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          
+          <!-- Dropdown menu -->
+          <div class="dropdown-menu">
+            <div class="dropdown-section">Current Profile</div>
+            <button class="dropdown-item active" onclick="switchProfile('John Doe', 'JD', event)">
+              <div class="avatar">JD</div>
+              <div>
+                <div>John Doe</div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">john@example.com</small>
+              </div>
+            </button>
+            
+            <div class="dropdown-divider"></div>
+            
+            <div class="dropdown-section">Switch Profile</div>
+            <button class="dropdown-item" onclick="switchProfile('Jane Smith', 'JS', event)">
+              <div class="avatar" style="background: #10b981;">JS</div>
+              <div>
+                <div>Jane Smith</div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">jane@example.com</small>
+              </div>
+            </button>
+            <button class="dropdown-item" onclick="switchProfile('Robert Brown', 'RB', event)">
+              <div class="avatar" style="background: #f59e0b;">RB</div>
+              <div>
+                <div>Robert Brown</div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">robert@example.com</small>
+              </div>
+            </button>
+            <button class="dropdown-item" onclick="switchProfile('Sarah Wilson', 'SW', event)">
+              <div class="avatar" style="background: #ec4899;">SW</div>
+              <div>
+                <div>Sarah Wilson</div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">sarah@example.com</small>
+              </div>
+            </button>
+            
+            <div class="dropdown-divider"></div>
+            
+            <button class="dropdown-item" onclick="addNewProfile()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span>Add Profile</span>
+            </button>
+            <button class="dropdown-item" onclick="manageProfiles()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m5.2-13.8l-4.2 4.2m-2 2l-4.2 4.2M23 12h-6m-6 0H5m13.8-5.2l-4.2 4.2m-2 2l-4.2 4.2"></path>
+              </svg>
+              <span>Manage Profiles</span>
+            </button>
+            
+            <div class="dropdown-divider"></div>
+            
+            <button class="dropdown-item" onclick="logout()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Log Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Created new dashboard-body wrapper to contain sidebar and main content below header -->
+    <div class="dashboard-body">
+      <!-- Sidebar -->
+      <!-- Removed sidebar-header as title moved to main header -->
+      <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Home</span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+                <span>Analytics</span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="2" y="2" rx="2"></rect><rect width="8" height="8" x="14" y="2" rx="2"></rect><rect width="8" height="8" x="2" y="14" rx="2"></rect><rect width="8" height="8" x="14" y="14" rx="2"></rect></svg>
+                <span>Projects</span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="4" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>Calendar</span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                <span>Settings</span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>Phone Book</span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="4" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>Calendar</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <div class="avatar">JD</div>
+            <div class="user-details">
+              <p>John Doe</p>
+              <small>john@example.com</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Content -->
+        <main class="content">
+          <div class="content-header">
+            <h1>Dashboard Overview</h1>
+            <div class="header-controls">
+              <button class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export
+              </button>
+              <div class="tabs">
+                <button class="tab active">Day</button>
+                <button class="tab">Week</button>
+                <button class="tab">Month</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Total Revenue</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="card-value">$45,231.89</div>
+              <p class="card-change">+20.1% from last month</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Subscriptions</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="card-value">+2,350</div>
+              <p class="card-change">+180.1% from last month</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Active Users</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              </div>
+              <div class="card-value">+12,234</div>
+              <p class="card-change">+19% from last month</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Conversion Rate</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
+              </div>
+              <div class="card-value">24.5%</div>
+              <p class="card-change">+4.3% from last month</p>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="charts-grid">
+            <div class="card">
+              <div class="chart-header">
+                <h3>Revenue Over Time</h3>
+                <p class="chart-description">Monthly revenue for the current year</p>
+              </div>
+              <div class="bar-chart" id="barChart"></div>
+              <div class="chart-labels">
+                <span>Jan</span>
+                <span>Feb</span>
+                <span>Mar</span>
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+                <span>Aug</span>
+                <span>Sep</span>
+                <span>Oct</span>
+                <span>Nov</span>
+                <span>Dec</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="chart-header">
+                <h3>Traffic Sources</h3>
+                <p class="chart-description">Distribution of traffic by source</p>
+              </div>
+              <div class="pie-chart-container">
+                <div class="pie-chart"></div>
+              </div>
+              <div class="legend">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(222.2, 47.4%, 11.2%);"></div>
+                  <span>Organic (40%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 17.5%);"></div>
+                  <span>Direct (30%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 27.5%);"></div>
+                  <span>Referral (20%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 37.5%);"></div>
+                  <span>Social (10%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="card">
+            <div class="chart-header">
+              <h3>Recent Activity</h3>
+              <p class="chart-description">Your latest activity and updates</p>
+            </div>
+            <div id="activity-feed"></div>
+            <div class="card-footer">
+              <button class="btn btn-full">View All Activity</button>
+            </div>
+          </div>
+
+          <!-- Phone Book section -->
+          <div class="card phonebook-card">
+            <div class="phonebook-header">
+              <div>
+                <h3>Phone Book</h3>
+                <p class="chart-description">Search and manage your contacts</p>
+              </div>
+              <div class="view-toggle">
+                <button class="view-btn active" id="card-view-btn">Card View</button>
+                <button class="view-btn" id="table-view-btn">Table View</button>
+              </div>
+            </div>
+            <div class="phonebook-search">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="phonebook-search-input" placeholder="Search contacts...">
+            </div>
+            <div class="contact-list" id="contact-list"></div>
+            <div class="contact-table-container hidden" id="contact-table-container">
+              <table class="contact-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Affiliation</th>
+                    <th>Phone</th>
+                    <th>Ext</th>
+                  </tr>
+                </thead>
+                <tbody id="contact-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Calendar section -->
+          <div class="card calendar-card">
+            <div class="chart-header">
+              <h3>Calendar</h3>
+              <p class="chart-description">View and manage your schedule</p>
+            </div>
+            <div class="calendar-header">
+              <div class="calendar-nav">
+                <button onclick="previousMonth()">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <span class="calendar-month" id="calendar-month"></span>
+                <button onclick="nextMonth()">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+              <button class="btn" onclick="goToToday()">Today</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Added event modal for adding/editing events -->
+  <div class="event-modal" id="event-modal">
+    <div class="event-modal-content">
+      <div class="event-modal-header">
+        <h3 id="modal-title">Events</h3>
+        <button class="close-modal" onclick="closeEventModal()">&times;</button>
+      </div>
+      
+      <form id="event-form" onsubmit="saveEvent(event)">
+        <div class="form-group">
+          <label for="event-title">Event Title</label>
+          <input type="text" id="event-title" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="event-time">Time</label>
+          <input type="time" id="event-time" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="event-description">Description</label>
+          <textarea id="event-description"></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="submit" class="btn">Save Event</button>
+          <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Cancel</button>
+        </div>
+      </form>
+
+      <div class="event-list" id="event-list"></div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * Initialize theme from localStorage or system preference
+     * Runs on page load to apply saved theme or detect user's system preference
+     */
+    function initTheme() {
+      // Check if user has a saved theme preference in localStorage
+      const savedTheme = localStorage.getItem('theme');
+      
+      if (savedTheme) {
+        // Apply saved theme
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else {
+        // Check system preference if no saved theme
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = prefersDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      }
+    }
+
+    /**
+     * Toggle between light and dark themes
+     * Saves preference to localStorage for persistence
+     */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      // Apply new theme to html element
+      html.setAttribute('data-theme', newTheme);
+      
+      // Save preference to localStorage
+      localStorage.setItem('theme', newTheme);
+      
+      console.log('[v0] Theme toggled to:', newTheme);
+    }
+
+    // Initialize theme on page load
+    initTheme();
+
+    // Sidebar toggle
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('collapsed');
+    }
+
+    // Tab Switching -- Not modified
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Generate bar chart
+    const barChart = document.getElementById('barChart');
+    const revenueData = [20000, 25000, 18000, 32000, 28000, 35000, 40000, 38000, 42000, 45000, 41000, 48000];
+    const maxRevenue = Math.max(...revenueData);
+
+    revenueData.forEach(revenue => {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = `${(revenue / maxRevenue) * 100}%`;
+      bar.title = `$${revenue.toLocaleString()}`; // Added title attribute for tooltip
+      barChart.appendChild(bar);
+    });
+
+    // Populate activity feed
+    const activityFeed = document.getElementById('activity-feed');
+    const activities = [
+      { user: 'Sarah Johnson', action: 'completed project "Mobile App Design"', time: '2 hours ago' },
+      { user: 'Mike Chen', action: 'uploaded new assets to drive', time: '4 hours ago' },
+      { user: 'Emma Wilson', action: 'commented on your post', time: '6 hours ago' },
+      { user: 'David Brown', action: 'assigned you to "Website Redesign"', time: '8 hours ago' }
+    ];
+
+    activities.forEach(activity => {
+      const item = document.createElement('div');
+      item.className = 'activity-item';
+      item.innerHTML = `
+        <div class="avatar">${activity.user.split(' ').map(n => n[0]).join('')}</div>
+        <div class="activity-content">
+          <p><strong>${activity.user}</strong> ${activity.action}</p>
+          <small>${activity.time}</small>
+        </div>
+      `;
+      activityFeed.appendChild(item);
+    });
+
+    const contacts = [
+      { name: 'Alice Johnson', affiliation: 'Sales Department', phone: '+1 (555) 123-4567', ext: '101' },
+      { name: 'Bob Smith', affiliation: 'Marketing Team', phone: '+1 (555) 234-5678', ext: '102' },
+      { name: 'Charlie Brown', affiliation: 'Engineering', phone: '+1 (555) 345-6789', ext: '103' },
+      { name: 'Diana Prince', affiliation: 'Human Resources', phone: '+1 (555) 456-7890', ext: '104' },
+      { name: 'Edward Norton', affiliation: 'IT Support', phone: '+1 (555) 567-8901', ext: '105' },
+      { name: 'Fiona Green', affiliation: 'Finance', phone: '+1 (555) 678-9012', ext: '106' },
+      { name: 'George Wilson', affiliation: 'Operations', phone: '+1 (555) 789-0123', ext: '107' },
+      { name: 'Hannah Lee', affiliation: 'Customer Service', phone: '+1 (555) 890-1234', ext: '108' }
+    ];
+
+    let currentView = 'card';
+
+    function renderContactsCard(filteredContacts) {
+      const contactList = document.getElementById('contact-list');
+      contactList.innerHTML = '';
+      
+      filteredContacts.forEach(contact => {
+        const item = document.createElement('div');
+        item.className = 'contact-item';
+        const initials = contact.name.split(' ').map(n => n[0]).join('');
+        item.innerHTML = `
+          <div class="contact-avatar">${initials}</div>
+          <div class="contact-info">
+            <div class="contact-name">${contact.name}</div>
+            <div class="contact-affiliation">${contact.affiliation}</div>
+            <div class="contact-details">
+              <div class="contact-phone">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                ${contact.phone}
+              </div>
+              <div class="contact-ext">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path></svg>
+                Ext: ${contact.ext}
+              </div>
+            </div>
+          </div>
+        `;
+        contactList.appendChild(item);
+      });
+    }
+
+    function renderContactsTable(filteredContacts) {
+      const tableBody = document.getElementById('contact-table-body');
+      tableBody.innerHTML = '';
+      
+      filteredContacts.forEach(contact => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <div>${contact.name}</div>
+          </td>
+          <td>
+            <div class="table-affiliation">${contact.affiliation}</div>
+          </td>
+          <td>${contact.phone}</td>
+          <td>${contact.ext}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function renderContacts(filteredContacts) {
+      if (currentView === 'card') {
+        renderContactsCard(filteredContacts);
+      } else {
+        renderContactsTable(filteredContacts);
+      }
+    }
+
+    // Initial render
+    renderContacts(contacts);
+
+    document.getElementById('card-view-btn').addEventListener('click', () => {
+      currentView = 'card';
+      document.getElementById('card-view-btn').classList.add('active');
+      document.getElementById('table-view-btn').classList.remove('active');
+      document.getElementById('contact-list').classList.remove('hidden');
+      document.getElementById('contact-table-container').classList.add('hidden');
+      
+      const searchTerm = document.getElementById('phonebook-search-input').value.toLowerCase();
+      const filtered = contacts.filter(contact => 
+        contact.name.toLowerCase().includes(searchTerm) || 
+        contact.phone.includes(searchTerm) ||
+        contact.affiliation.toLowerCase().includes(searchTerm) ||
+        contact.ext.includes(searchTerm)
+      );
+      renderContacts(filtered);
+    });
+
+    document.getElementById('table-view-btn').addEventListener('click', () => {
+      currentView = 'table';
+      document.getElementById('table-view-btn').classList.add('active');
+      document.getElementById('card-view-btn').classList.remove('active');
+      document.getElementById('contact-table-container').classList.remove('hidden');
+      document.getElementById('contact-list').classList.add('hidden');
+      
+      const searchTerm = document.getElementById('phonebook-search-input').value.toLowerCase();
+      const filtered = contacts.filter(contact => 
+        contact.name.toLowerCase().includes(searchTerm) || 
+        contact.phone.includes(searchTerm) ||
+        contact.affiliation.toLowerCase().includes(searchTerm) ||
+        contact.ext.includes(searchTerm)
+      );
+      renderContacts(filtered);
+    });
+
+    document.getElementById('phonebook-search-input').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = contacts.filter(contact => 
+        contact.name.toLowerCase().includes(searchTerm) || 
+        contact.phone.includes(searchTerm) ||
+        contact.affiliation.toLowerCase().includes(searchTerm) ||
+        contact.ext.includes(searchTerm)
+      );
+      renderContacts(filtered);
+    });
+
+    let currentDate = new Date();
+    let selectedDate = new Date();
+
+    // Changed events structure to be an object where keys are date strings
+    let events = {};
+    let editingEventId = null;
+
+    // Load events from localStorage
+    function loadEvents() {
+      const savedEvents = localStorage.getItem('calendar-events');
+      if (savedEvents) {
+        events = JSON.parse(savedEvents);
+      } else {
+        // Initialize with an empty object if no data found
+        events = {};
+      }
+    }
+
+    // Save events to localStorage
+    function saveEventsToStorage() {
+      localStorage.setItem('calendar-events', JSON.stringify(events));
+    }
+
+    // Get events for a specific date
+    function getEventsForDate(date) {
+      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      return events[dateKey] || [];
+    }
+
+    // Check if a date has events
+    function hasEvents(year, month, day) {
+      const date = new Date(year, month, day);
+      return getEventsForDate(date).length > 0;
+    }
+
+    function renderCalendar() {
+      const calendarGrid = document.getElementById('calendar-grid');
+      const calendarMonth = document.getElementById('calendar-month');
+      
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+      
+      calendarMonth.textContent = `${monthNames[month]} ${year}`;
+      
+      // Clear grid
+      calendarGrid.innerHTML = '';
+      
+      // Add day headers
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      dayNames.forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'calendar-day-header';
+        header.textContent = day;
+        calendarGrid.appendChild(header);
+      });
+      
+      // Get first day of month and number of days
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+      
+      // Add previous month's days
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const day = document.createElement('div');
+        day.className = 'calendar-day other-month';
+        day.innerHTML = `<span class="calendar-day-number">${daysInPrevMonth - i}</span>`;
+        calendarGrid.appendChild(day);
+      }
+      
+      // Add current month's days
+      const today = new Date();
+      for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement('div');
+        day.className = 'calendar-day';
+        
+        const dayNumber = document.createElement('span');
+        dayNumber.className = 'calendar-day-number';
+        dayNumber.textContent = i;
+        day.appendChild(dayNumber);
+        
+        // Check if today
+        if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+          day.classList.add('today');
+        }
+        
+        // Check if selected
+        if (year === selectedDate.getFullYear() && month === selectedDate.getMonth() && i === selectedDate.getDate()) {
+          day.classList.add('selected');
+        }
+        
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        const dayEvents = events[dateKey] || [];
+        
+        if (dayEvents.length > 0) {
+          day.classList.add('has-events');
+          
+          // Show up to 2 events
+          const eventsToShow = dayEvents.slice(0, 2);
+          eventsToShow.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.className = 'calendar-event-item';
+            eventItem.textContent = event.title;
+            eventItem.title = event.title; // Tooltip for full title
+            day.appendChild(eventItem);
+          });
+          
+          // Show "+X more" if there are more events
+          if (dayEvents.length > 2) {
+            const moreText = document.createElement('div');
+            moreText.className = 'calendar-event-more';
+            moreText.textContent = `+${dayEvents.length - 2} more`;
+            day.appendChild(moreText);
+          }
+        }
+        
+        day.addEventListener('click', () => {
+          selectedDate = new Date(year, month, i);
+          renderCalendar();
+          openEventModal();
+        });
+        
+        calendarGrid.appendChild(day);
+      }
+      
+      // Add next month's days
+      const totalCells = calendarGrid.children.length - 7; // minus day headers
+      const remainingCells = 42 - totalCells; // 6 rows * 7 days
+      for (let i = 1; i <= remainingCells; i++) {
+        const day = document.createElement('div');
+        day.className = 'calendar-day other-month';
+        day.innerHTML = `<span class="calendar-day-number">${i}</span>`;
+        calendarGrid.appendChild(day);
+      }
+    }
+
+    function previousMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+
+    function goToToday() {
+      currentDate = new Date();
+      selectedDate = new Date();
+      renderCalendar();
+    }
+
+    function openEventModal() {
+      const modal = document.getElementById('event-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const dateStr = selectedDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      modalTitle.textContent = `Events for ${dateStr}`;
+      modal.classList.add('active');
+      renderEventList();
+    }
+
+    function closeEventModal() {
+      const modal = document.getElementById('event-modal');
+      modal.classList.remove('active');
+      document.getElementById('event-form').reset();
+      editingEventId = null;
+    }
+
+    function renderEventList() {
+      const eventList = document.getElementById('event-list');
+      const dayEvents = getEventsForDate(selectedDate);
+      
+      if (dayEvents.length === 0) {
+        eventList.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0;">No events scheduled for this day.</p>';
+        return;
+      }
+      
+      eventList.innerHTML = dayEvents.map(event => `
+        <div class="event-item">
+          <div class="event-info">
+            <h4>${event.title}</h4>
+            <p>${event.time}${event.description ? ' - ' + event.description : ''}</p>
+          </div>
+          <div class="event-actions">
+            <button onclick="editEvent('${event.id}')" title="Edit">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button onclick="deleteEvent('${event.id}')" title="Delete" style="color: #dc2626;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveEvent(e) {
+      e.preventDefault();
+      
+      const title = document.getElementById('event-title').value;
+      const time = document.getElementById('event-time').value;
+      const description = document.getElementById('event-description').value;
+      
+      const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+      
+      if (editingEventId) {
+        // Update existing event
+        const eventIndex = events[dateKey].findIndex(e => e.id === editingEventId);
+        if (eventIndex !== -1) {
+          events[dateKey][eventIndex] = {
+            ...events[dateKey][eventIndex],
+            title,
+            time,
+            description
+          };
+        }
+        editingEventId = null;
+      } else {
+        // Add new event
+        const newEvent = {
+          id: Date.now().toString(),
+          title,
+          time,
+          description
+        };
+        if (!events[dateKey]) {
+          events[dateKey] = [];
+        }
+        events[dateKey].push(newEvent);
+      }
+      
+      saveEventsToStorage();
+      document.getElementById('event-form').reset();
+      renderEventList();
+      renderCalendar();
+    }
+
+    function editEvent(id) {
+      const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+      const dayEvents = events[dateKey] || [];
+      const event = dayEvents.find(e => e.id === id);
+
+      if (event) {
+        editingEventId = id;
+        document.getElementById('event-title').value = event.title;
+        document.getElementById('event-time').value = event.time;
+        document.getElementById('event-description').value = event.description || '';
+      }
+    }
+
+    function deleteEvent(id) {
+      if (confirm('Are you sure you want to delete this event?')) {
+        const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        if (events[dateKey]) {
+          events[dateKey] = events[dateKey].filter(e => e.id !== id);
+          if (events[dateKey].length === 0) {
+            delete events[dateKey]; // Remove the date key if no events are left
+          }
+        }
+        saveEventsToStorage();
+        renderEventList();
+        renderCalendar();
+      }
+    }
+
+    // Toggle profile dropdown menu
+    function toggleProfileDropdown(event) {
+      event.stopPropagation(); // Prevent event from bubbling up
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.toggle('open');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // Switch to a different profile
+    function switchProfile(name, initials, event) {
+      event.stopPropagation(); // Prevent dropdown from closing immediately
+      
+      // Update all avatar elements with new initials
+      const avatars = document.querySelectorAll('.avatar');
+      avatars.forEach(avatar => {
+        if (avatar.closest('.dropdown-menu')) return; // Skip dropdown avatars
+        avatar.textContent = initials;
+      });
+      
+      // Update user name in sidebar
+      const userName = document.querySelector('.user-details p');
+      if (userName) {
+        userName.textContent = name;
+      }
+      
+      // Update header title to show current user
+      const headerTitle = document.querySelector('.header-left h1');
+      if (headerTitle) {
+        headerTitle.textContent = `Dashboard - ${name}`;
+      }
+      
+      // Update active state in dropdown
+      const dropdownItems = document.querySelectorAll('.dropdown-item');
+      dropdownItems.forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // Save selected profile to localStorage
+      localStorage.setItem('selectedProfile', JSON.stringify({ name, initials }));
+      
+      // Close dropdown after selection
+      setTimeout(() => {
+        document.getElementById('profileDropdown').classList.remove('open');
+      }, 200);
+    }
+
+    // Load saved profile on page load
+    function loadSavedProfile() {
+      const savedProfile = localStorage.getItem('selectedProfile');
+      if (savedProfile) {
+        const { name, initials } = JSON.parse(savedProfile);
+        
+        // Update avatars
+        const avatars = document.querySelectorAll('.avatar');
+        avatars.forEach(avatar => {
+          if (avatar.closest('.dropdown-menu')) return;
+          avatar.textContent = initials;
+        });
+        
+        // Update user name
+        const userName = document.querySelector('.user-details p');
+        if (userName) {
+          userName.textContent = name;
+        }
+        
+        // Update header title
+        const headerTitle = document.querySelector('.header-left h1');
+        if (headerTitle) {
+          headerTitle.textContent = `Dashboard - ${name}`;
+        }
+      }
+    }
+
+    // Add new profile functionality
+    function addNewProfile() {
+      alert('Add New Profile functionality would open a modal to create a new profile');
+      document.getElementById('profileDropdown').classList.remove('open');
+    }
+
+    // Manage profiles functionality
+    function manageProfiles() {
+      alert('Manage Profiles functionality would open a settings page');
+      document.getElementById('profileDropdown').classList.remove('open');
+    }
+
+    // Logout functionality
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem('selectedProfile');
+        alert('Logged out successfully');
+        document.getElementById('profileDropdown').classList.remove('open');
+      }
+    }
+
+    // Toggle dark mode
+    // ... existing code ...
+
+    window.addEventListener('DOMContentLoaded', function() {
+      // Removed loadTheme() and kept initTheme() for consistency
+      initTheme(); 
+      loadSavedProfile(); // Load saved profile
+      // Removed renderCalendar(currentMonth, currentYear); as it's not defined and renderCalendar() is called later
+      loadEvents(); // Ensure events are loaded before initial render
+      renderCalendar(); // Initial calendar render
+    });
+  </script>
+</body>
+</html>
