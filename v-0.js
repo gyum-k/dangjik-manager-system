@@ -37,6 +37,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.getElementById('profile-dropdown');
     dropdown.classList.toggle('open');
   })
+
+  fetch("./profile.json")
+    .then((res) => res.json())
+    .then((data) => {
+    const dropdownList = document.querySelector("#profile-dropdown .dropdown-menu .dropdown-list");
+
+      if (!dropdownList) {
+        console.error("❌ #dropdown-list 요소를 찾을 수 없습니다.");
+        return;
+      }
+
+      const profileHTML = data.map((item) => {
+        return `
+          <div class="dropdown-item" data-key="${item.key}">
+            <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${item.name[0]}</div>
+              <div class="content">
+                <div class="text">${item.name}</div>
+                <div class="rank">${item.rank}</div>
+              </div>
+            </div>
+        `;
+        })
+        .join("");
+
+      dropdownList.innerHTML = profileHTML;
+    })
+    .catch((error) => {
+      console.error("❌ profile.json 로딩 오류:", error);
+    });
   
   // 사이드바 토글
   const sidebarToggle = document.querySelector('.sidebar-toggle');
@@ -57,9 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const menuHTML = data.menu
-        .map((item) => {
-          return `
+      const menuHTML = data.map((item) => {
+        return `
           <li data-key="${item.id}">
             <button class="nav-button" onclick="location.href='${item.link}'">
               <img class="icon" src="${item.icon}" alt="${item.label} 아이콘" />

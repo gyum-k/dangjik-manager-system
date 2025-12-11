@@ -1,48 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>육사교 - 당직 관리 시스템</title>
-    <link rel="icon" href="./favicon/favicon.ico" />
-    <link rel="stylesheet" href="./css/reset.css" />
-    <link rel="stylesheet" href="./css/common.css" />
-    <script src="./js/common.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>육사교 - 당직 관리 시스템</title>
+  <link rel="icon" href="./favicon/favicon.ico" />
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./css/common.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <script src="./js/common.js"></script>
+  <script src="./js/main.js"></script>
 </head>
 <body>
-    <div id="site-container">
-        <header id="site-header">
-            <div class="container">
-                <div class="header-left">
-                    <div class="ham-btn" id="btn-toggle">
-                        <img src="./img/svg/hamburger.svg" />
-                    </div>
-                    <a href="/" class="brand" aria-label="육사교 당직 관리 시스템 홈">
-                        <img class="logo logo-dark" src="./img/svg/logo.svg" alt="BlueCanvas" height="28">
-                    </a>
-                </div>
-                <div class="header-right">
-                    <div class="profile">
-                        <div class="avatar">김</div>
-                         <div style="display:flex;flex-direction:column;text-align:right; align-items:center; gap:2px;">
-                            <div style="font-size:14px;font-weight:600">김규민</div>
-                            <div style="font-size:12px;color:var(--muted)">일병</div>
-                        </div>
-                    </div>
-                    <div class="dark-toggle">
-                        <!-- <img src="./img/svg/bright.svg" alt="다크모드 토글" width="25px" height="25px"/> -->
-                        <img src="./img/svg/moon.svg" alt="다크모드 토글" width="24px" height="24px"/>
-                    </div>
-                </div>
+  <div id="site-container">
+    <header id="site-header">
+      <div class="header-left">
+        <button class="sidebar-toggle">
+          <img src="./img/svg/hamburger-icon.svg" />
+        </button>
+        <a href="/" class="brand" aria-label="육사교 당직 관리 시스템 홈" style="display: flex;">
+          <img class="logo" src="./img/svg/logo.svg" alt="육사교 당직 관리 시스템 로고" height="28">
+        </a>
+      </div>
+      <div class="header-right">
+        <div class="profile-dropdown" id="profile-dropdown">
+          <div class="profile-toggle">
+            <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">김</div>
+            <div class="content">
+              <div class="text">김규민</div>
+              <div class="rank">일병</div>
             </div>
-        </header>
-    
-        <aside class="collapsed" id="site-sidebar">
-            <nav class="nav" id="nav"></nav>
-        </aside>
-        <main class="collapsed" id="site-main">
-            <div class="container"></div>
+            <img class="arrow-icon" src="./img/svg/arrow-icon.svg" />
+          </div>
+
+          <div class="dropdown-menu">
+            <div class="dropdown-section">당직 프로필 선택</div>
+            <div class="dropdown-list"></div>
+          </div>
+        </div>
+
+        <button class="theme-toggle" aria-label="Toggle dark mode">
+          <img class="sun-icon" src="./img/svg/sun-icon.svg" alt="Light Theme">
+          <img class="moon-icon" src="./img/svg/moon-icon.svg" alt="Dark Theme">
+        </button>
+      </div>
+    </header>
+
+    <div class="container-body">
+      <aside class="collapsed" id="site-sidebar">
+        <nav class="sidebar-nav">
+          <ul></ul>
+        </nav>
+      </aside>
+
+      <div id="main-content">
+        <main class="content">
+          <div class="content-header"></div>
+          
+          <div class="stats-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">현재 시각</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              </div>
+              <div class="card-value current-time"></div>
+              <p class="card-change current-date"></p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">오늘의 당직</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="card-value">김규민</div>
+              <p class="card-change">일병</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">오늘의 일정</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
+              </div>
+              <div class="card-value">-</div>
+              <p class="card-change">그외의 일정 확인</p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">오늘의 명언</h3>
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
+              </div>
+              <div class="card-value" style="font-size: 1.2rem;">오늘 할 수 있는 일을 내일로 미루지 마라.</div>
+              <p class="card-change"></p>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="card">
+              <div class="chart-header">
+                <h3>특이사항</h3>
+                <p class="chart-description">특이사항을 작성해 주세요.</p>
+              </div>
+              <div class="bar-chart" id="barChart"></div>
+              <div class="chart-labels">
+                <span>Jan</span>
+                <span>Feb</span>
+                <span>Mar</span>
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+                <span>Aug</span>
+                <span>Sep</span>
+                <span>Oct</span>
+                <span>Nov</span>
+                <span>Dec</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="chart-header">
+                <h3>최신화</h3>
+                <p class="chart-description">최신화를 작성해 주세요.</p>
+              </div>
+              <div class="pie-chart-container">
+                <div class="pie-chart"></div>
+              </div>
+              <div class="legend">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(222.2, 47.4%, 11.2%);"></div>
+                  <span>Organic (40%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 17.5%);"></div>
+                  <span>Direct (30%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 27.5%);"></div>
+                  <span>Referral (20%)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 37.5%);"></div>
+                  <span>Social (10%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="chart-header">
+              <h3>Recent Activity</h3>
+              <p class="chart-description">Your latest account activity</p>
+            </div>
+            <div id="activityList"></div>
+            <div class="card-footer">
+              <button class="btn btn-full">View All Activity</button>
+            </div>
+          </div>
         </main>
+      </div>
     </div>
+  </div>
+
+  <script>
+    // Tab Switching -- Not modified
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Generate bar chart
+    const barChart = document.getElementById('barChart');
+    const revenueData = [20000, 25000, 18000, 32000, 28000, 35000, 40000, 38000, 42000, 45000, 41000, 48000];
+    const maxRevenue = Math.max(...revenueData);
+
+    revenueData.forEach(revenue => {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = `${(revenue / maxRevenue) * 100}%`;
+      bar.title = `$${revenue.toLocaleString()}`; // Added title attribute for tooltip
+      barChart.appendChild(bar);
+    });
+
+    // Generate activity list
+    const activities = [
+      { action: 'New user registration', time: '5 minutes ago' },
+      { action: 'Payment received', time: '12 minutes ago' },
+      { action: 'New project created', time: '1 hour ago' },
+      { action: 'User subscription upgraded', time: '2 hours ago' },
+      { action: 'Bug report submitted', time: '3 hours ago' }
+    ];
+
+    const activityList = document.getElementById('activityList');
+    activities.forEach(activity => {
+      const item = document.createElement('div');
+      item.className = 'activity-item';
+      item.innerHTML = `
+        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <div class="activity-content">
+          <p>${activity.action}</p>
+          <small>${activity.time}</small>
+        </div>
+      `;
+      activityList.appendChild(item);
+    });
+  </script>
 </body>
 </html>
