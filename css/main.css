@@ -1,0 +1,161 @@
+@charset "utf-8";
+
+/* 육사교 - 당직 관리 시스템 메인 CSS */
+
+
+/*********************** 메인 영역 ***********************/
+#main-content .content .d-grid,
+#main-content .content .s-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#main-content .content .overview-grid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+#main-content .content .editor-grid {
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+#main-content .content .d-card,
+#main-content .content .s-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] #main-content .content .d-card,
+[data-theme="dark"] #main-content .content .s-card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+#main-content .content .d-card .d-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+#main-content .content .d-card .d-card-header .d-card-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+#main-content .content .d-card .d-card-header .d-card-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+}
+
+#main-content .content .d-card .d-card-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+#main-content .content .d-card .d-card-change {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+#main-content .content .s-card .s-card-header {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+#main-content .content .s-card .s-card-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+#main-content .content .s-card .s-card-header .s-card-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+#main-content .content .s-card .s-card-footer {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+#main-content .content .editor-grid .significant-card .significant-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: 300px;
+  padding: 1rem 0;
+}
+
+#main-content .content .editor-grid .newest-card .newest-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  margin-bottom: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-content p {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.activity-content small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-content p {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.activity-content small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  #main-content .content .d-grid,
+  #main-content .content .s-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>육사교 - 당직 관리 시스템</title>
   <link rel="icon" href="./favicon/favicon.ico" />
   <link rel="stylesheet" href="./css/reset.css" />
   <link rel="stylesheet" href="./css/common.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css" />
   <script src="./js/common.js"></script>
   <script src="./js/main.js"></script>
 </head>
@@ -57,100 +58,75 @@
         <main class="content">
           <div class="content-header"></div>
           
-          <div class="stats-grid">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">현재 시각</h3>
-                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          <div class="overview-grid d-grid">
+            <div class="overview-card d-card">
+              <div class="d-card-header">
+                <h3 class="d-card-title">현재 시각</h3>
+                <svg class="d-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
               </div>
-              <div class="card-value current-time"></div>
-              <p class="card-change current-date"></p>
+              <div class="d-card-value current-time"></div>
+              <p class="d-card-change current-date"></p>
             </div>
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">오늘의 당직</h3>
-                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <div class="overview-card d-card">
+              <div class="d-card-header">
+                <h3 class="d-card-title">오늘의 당직</h3>
+                <svg class="d-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               </div>
-              <div class="card-value">김규민</div>
-              <p class="card-change">일병</p>
+              <div class="d-card-value">김규민</div>
+              <p class="d-card-change">일병</p>
             </div>
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">오늘의 일정</h3>
-                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
+            <div class="overview-card d-card">
+              <div class="d-card-header">
+                <h3 class="d-card-title">오늘의 일정</h3>
+                <svg class="d-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
               </div>
-              <div class="card-value">-</div>
-              <p class="card-change">그외의 일정 확인</p>
+              <div class="d-card-value">-</div>
+              <p class="d-card-change">그외의 일정 확인</p>
             </div>
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">오늘의 명언</h3>
-                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
+            <div class="overview-card d-card">
+              <div class="d-card-header">
+                <h3 class="d-card-title">오늘의 명언</h3>
+                <svg class="d-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>
               </div>
-              <div class="card-value" style="font-size: 1.2rem;">오늘 할 수 있는 일을 내일로 미루지 마라.</div>
-              <p class="card-change"></p>
+              <div class="d-card-value" style="font-size: 1.2rem;">오늘 할 수 있는 일을 내일로 미루지 마라.</div>
+              <p class="d-card-change"></p>
             </div>
           </div>
 
-          <div class="charts-grid">
-            <div class="card">
-              <div class="chart-header">
+          <div class="editor-grid s-grid">
+            <div class="significant-card s-card">
+              <div class="s-card-header">
                 <h3>특이사항</h3>
-                <p class="chart-description">특이사항을 작성해 주세요.</p>
+                <p class="s-card-description">특이사항을 작성해 주세요.</p>
               </div>
-              <div class="bar-chart" id="barChart"></div>
-              <div class="chart-labels">
-                <span>Jan</span>
-                <span>Feb</span>
-                <span>Mar</span>
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-                <span>Aug</span>
-                <span>Sep</span>
-                <span>Oct</span>
-                <span>Nov</span>
-                <span>Dec</span>
+              <div>
+                <!-- https://dohyeon.dev/building-markdown-editor -->
+                <button style="padding: 6px 10px; margin-right: 5px; font-size: 14px; cursor: pointer;">H1</button>
+                <button style="padding: 6px 10px; margin-right: 5px; font-size: 14px; cursor: pointer;">H2</button>
+                <button style="padding: 6px 10px; margin-right: 5px; font-size: 14px; cursor: pointer;">H3</button>
+                <button style="padding: 6px 10px; margin-right: 5px; font-size: 14px; cursor: pointer;">B</button>
+                <button style="padding: 6px 10px; margin-right: 5px; font-size: 14px; cursor: pointer;">I</button>
+              </div>
+              <div class="significant-container">
               </div>
             </div>
 
-            <div class="card">
-              <div class="chart-header">
+            <div class="newest-card s-card">
+              <div class="s-card-header">
                 <h3>최신화</h3>
-                <p class="chart-description">최신화를 작성해 주세요.</p>
+                <p class="s-card-description">최신화를 작성해 주세요.</p>
               </div>
-              <div class="pie-chart-container">
-                <div class="pie-chart"></div>
-              </div>
-              <div class="legend">
-                <div class="legend-item">
-                  <div class="legend-color" style="background: hsl(222.2, 47.4%, 11.2%);"></div>
-                  <span>Organic (40%)</span>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 17.5%);"></div>
-                  <span>Direct (30%)</span>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 27.5%);"></div>
-                  <span>Referral (20%)</span>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-color" style="background: hsl(217.2, 32.6%, 37.5%);"></div>
-                  <span>Social (10%)</span>
-                </div>
-              </div>
+              <div class="newest-container"></div>
             </div>
           </div>
 
-          <div class="card">
-            <div class="chart-header">
-              <h3>Recent Activity</h3>
-              <p class="chart-description">Your latest account activity</p>
+          <div class="checklist-card s-card">
+            <div class="s-card-header">
+              <h3>당직 체크리스트</h3>
+              <p class="s-card-description">당직 체크리스트 입니다.</p>
             </div>
             <div id="activityList"></div>
-            <div class="card-footer">
+            <div class="s-card-footer">
               <button class="btn btn-full">View All Activity</button>
             </div>
           </div>
@@ -160,27 +136,6 @@
   </div>
 
   <script>
-    // Tab Switching -- Not modified
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-
-    // Generate bar chart
-    const barChart = document.getElementById('barChart');
-    const revenueData = [20000, 25000, 18000, 32000, 28000, 35000, 40000, 38000, 42000, 45000, 41000, 48000];
-    const maxRevenue = Math.max(...revenueData);
-
-    revenueData.forEach(revenue => {
-      const bar = document.createElement('div');
-      bar.className = 'bar';
-      bar.style.height = `${(revenue / maxRevenue) * 100}%`;
-      bar.title = `$${revenue.toLocaleString()}`; // Added title attribute for tooltip
-      barChart.appendChild(bar);
-    });
-
     // Generate activity list
     const activities = [
       { action: 'New user registration', time: '5 minutes ago' },

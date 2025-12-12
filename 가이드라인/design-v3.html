@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>고급 WYSIWYG Editor</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f4f4f4;
+    }
+    .toolbar {
+        margin-bottom: 10px;
+    }
+    .toolbar button, .toolbar select, .toolbar input {
+        padding: 6px 10px;
+        margin-right: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    #editor {
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #ccc;
+        min-height: 300px;
+    }
+</style>
+</head>
+<body>
+
+<h2>고급 게시판 텍스트 편집기</h2>
+
+<div class="toolbar">
+
+    <!-- 기본 스타일 -->
+    <button onclick="exec('bold')"><b>굵게</b></button>
+    <button onclick="exec('italic')"><i>기울임</i></button>
+    <button onclick="exec('underline')"><u>밑줄</u></button>
+    <button onclick="exec('strikeThrough')"><s>취소선</s></button>
+
+    │ 글자 크기:
+    <select onchange="execFontSize(this.value)">
+        <option value="3">보통</option>
+        <option value="2">작게</option>
+        <option value="4">크게</option>
+        <option value="5">아주 크게</option>
+        <option value="6">최대</option>
+    </select>
+
+    │ 폰트:
+    <select onchange="execFontName(this.value)">
+        <option value="Arial">Arial</option>
+        <option value="Gulim">굴림</option>
+        <option value="Dotum">돋움</option>
+        <option value="Batang">바탕</option>
+        <option value="Courier New">Courier</option>
+    </select>
+
+    │ 텍스트 색:
+    <input type="color" onchange="execColor(this.value)">
+
+    │ 배경(형광펜):
+    <input type="color" onchange="execBackColor(this.value)">
+
+    <br><br>
+
+    <!-- 정렬 -->
+    <button onclick="exec('justifyLeft')">왼쪽</button>
+    <button onclick="exec('justifyCenter')">가운데</button>
+    <button onclick="exec('justifyRight')">오른쪽</button>
+    <button onclick="exec('justifyFull')">양쪽정렬</button>
+
+    │ 목록:
+    <button onclick="exec('insertUnorderedList')">● 불릿</button>
+    <button onclick="exec('insertOrderedList')">1. 번호</button>
+
+    │ 하이퍼링크:
+    <button onclick="insertLink()">링크</button>
+
+    │ 기타:
+    <button onclick="exec('undo')">Undo</button>
+    <button onclick="exec('redo')">Redo</button>
+    <button onclick="exec('selectAll')">전체 선택</button>
+    <button onclick="exec('insertHorizontalRule')">구분선</button>
+
+    │ 저장:
+    <button onclick="saveContent()">저장</button>
+    <button onclick="loadContent()">불러오기</button>
+    <button onclick="clearContent()">초기화</button>
+</div>
+
+<div id="editor" contenteditable="true">
+여기에 글을 입력하세요...
+</div>
+
+<script>
+    function exec(cmd) {
+        document.execCommand(cmd, false, null);
+    }
+
+    function execFontSize(size) {
+        document.execCommand("fontSize", false, size);
+    }
+
+    function execFontName(name) {
+        document.execCommand("fontName", false, name);
+    }
+
+    function execColor(color) {
+        document.execCommand("foreColor", false, color);
+    }
+
+    function execBackColor(color) {
+        document.execCommand("hiliteColor", false, color);
+    }
+
+    function insertLink() {
+        let url = prompt("링크 주소를 입력하세요:");
+        if (url) document.execCommand("createLink", false, url);
+    }
+
+    /* --- 로컬스토리지 저장 기능 --- */
+    function saveContent() {
+        localStorage.setItem("editorContent", document.getElementById("editor").innerHTML);
+        alert("저장되었습니다!");
+    }
+
+    function loadContent() {
+        const content = localStorage.getItem("editorContent");
+        if (content) {
+            document.getElementById("editor").innerHTML = content;
+            alert("불러왔습니다!");
+        } else {
+            alert("저장된 내용이 없습니다.");
+        }
+    }
+
+    function clearContent() {
+        localStorage.removeItem("editorContent");
+        document.getElementById("editor").innerHTML = "";
+        alert("초기화 완료!");
+    }
+
+    // 입력할 때 자동 저장
+    document.getElementById("editor").addEventListener("input", function() {
+        localStorage.setItem("editorContent", this.innerHTML);
+    });
+
+    // 페이지 로드 시 불러오기
+    window.onload = () => {
+        const saved = localStorage.getItem("editorContent");
+        if (saved) document.getElementById("editor").innerHTML = saved;
+    };
+</script>
+
+</body>
+</html>
