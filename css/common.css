@@ -161,7 +161,7 @@ body {
   line-height: 1;
 }
 
-#site-header .header-right .profile-dropdown .profile-toggle .content .text {
+#site-header .header-right .profile-dropdown .profile-toggle .content .name {
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
@@ -252,7 +252,7 @@ body {
   line-height: 1;
 }
 
-#site-header .header-right .profile-dropdown .dropdown-menu .dropdown-item .content .text {
+#site-header .header-right .profile-dropdown .dropdown-menu .dropdown-item .content .name {
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;

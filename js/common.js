@@ -74,29 +74,6 @@ function initTheme() {
   }
 }
 
-// 사이드바 토글 구현
-function sidebarToggle() {
-  document.querySelector('#site-sidebar').classList.toggle('collapsed');
-}
-
-// 사이드바 화면 구현
-function initSidebar() {
-  const sidebarNav = document.querySelector("#site-sidebar .sidebar-nav ul");
-
-  const sidebarHTML = sidebar_data.map((item) => {
-    return `
-      <li data-key="${item.id}">
-        <button class="nav-button" onclick="location.href='${item.link}'">
-          <img class="icon" src="${item.icon}" alt="${item.label} 아이콘" />
-          <span class="title">${item.label}</span>
-        </button
-      </li>
-    `;
-  }).join("");
-
-  sidebarNav.innerHTML = sidebarHTML;
-} 
-
 // 테마 토글 구현
 function toggleTheme() {
   const html = document.documentElement;
@@ -107,17 +84,85 @@ function toggleTheme() {
   localStorage.setItem("dms.theme", theme);
 }
 
+// 사이드바 토글 구현
+function sidebarToggle() {
+  document.querySelector('#site-sidebar').classList.toggle('collapsed');
+}
+
+// 사이드바 화면 구현
+function initSidebar() {
+  const sidebarNav = document.querySelector("#site-sidebar .sidebar-nav ul");
+
+  const sidebarHTML = sidebar_data.map((x) => {
+    return `
+      <li data-key="${x.id}">
+        <button class="nav-button" onclick="location.href='${x.link}'">
+          <img class="icon" src="${x.icon}" alt="${x.label} 아이콘" />
+          <span class="title">${x.label}</span>
+        </button
+      </li>
+    `;
+  }).join("");
+
+  sidebarNav.innerHTML = sidebarHTML;
+}
+
 // 프로필 드롭다운 구현
 function initProfile() {
+  const savedProfile = localStorage.getItem("dms.profile-list");
+
+  if (!savedProfile) {
+    const profileAvater = document.querySelector('#profile-dropdown .profile-toggle .avatar');
+    const profileName = document.querySelector('#profile-dropdown .profile-toggle .name');
+    const profileRank = document.querySelector('#profile-dropdown .profile-toggle .rank');
+    const dropdownList = document.querySelector("#profile-dropdown .dropdown-menu .dropdown-list");
+
+    const currentProfile = profile_data.find(x => x.selected);
+
+    profileAvater.innerText = currentProfile.name[0];
+    profileName.innerText = currentProfile.name;
+    profileRank.innerText = currentProfile.rank;  
+
+    const profileHTML = profile_data.filter(d => !d.selected).map((x) => {
+      return `
+        <div class="dropdown-item" data-key="${x.key}">
+          <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${x.name[0]}</div>
+            <div class="content">
+              <div class="name">${x.name}</div>
+              <div class="rank">${x.rank}</div>
+            </div>
+        </div>
+      `;
+    }).join("");
+  
+    dropdownList.innerHTML = profileHTML;
+  } else {
+    initProfileList()
+  }
+}
+
+function initProfileList() {
+  const profileAvater = document.querySelector('#profile-dropdown .profile-toggle .avatar');
+  const profileName = document.querySelector('#profile-dropdown .profile-toggle .name');
+  const profileRank = document.querySelector('#profile-dropdown .profile-toggle .rank');
   const dropdownList = document.querySelector("#profile-dropdown .dropdown-menu .dropdown-list");
 
-  const profileHTML = profile_data.map((item) => {
+  const savedProfile = localStorage.getItem("dms.profile-list");
+
+  const currentProfile = JSON.parse(savedProfile).find(x => x.selected);
+  const profileList = JSON.parse(savedProfile).filter(x => !x.selected)
+
+  profileAvater.innerText = currentProfile.name[0];
+  profileName.innerText = currentProfile.name;
+  profileRank.innerText = currentProfile.rank;
+
+  const profileHTML = profileList.map((x) => {
     return `
-      <div class="dropdown-item" data-key="${item.key}">
-        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${item.name[0]}</div>
+      <div class="dropdown-item" data-key="${x.key}">
+        <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${x.name[0]}</div>
           <div class="content">
-            <div class="text">${item.name}</div>
-            <div class="rank">${item.rank}</div>
+            <div class="name">${x.name}</div>
+            <div class="rank">${x.rank}</div>
           </div>
       </div>
     `;
