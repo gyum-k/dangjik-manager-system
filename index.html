@@ -97,15 +97,171 @@
             <div class="significant-card s-card">
               <div class="s-card-header">
                 <h3>특이사항</h3>
-                <p class="s-card-description">특이사항을 작성해 주세요.</p>
+                <!-- <p class="s-card-description">특이사항을 작성해 주세요.</p> -->
+                 <div class="significant-toolbar toolbar">
+                  <button onclick="formatText('formatBlock', 'h1')" class="toolbar-btn" title="H1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading1-icon lucide-heading-1">
+                      <path d="M4 12h8"/>
+                      <path d="M4 18V6"/>
+                      <path d="M12 18V6"/>
+                      <path d="m17 12 3-2v8"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('formatBlock', 'h2')" class="toolbar-btn" title="H2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading2-icon lucide-heading-2">
+                      <path d="M4 12h8"/>
+                      <path d="M4 18V6"/>
+                      <path d="M12 18V6"/>
+                      <path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('formatBlock', 'h3')" class="toolbar-btn" title="H3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading3-icon lucide-heading-3">
+                      <path d="M4 12h8"/>
+                      <path d="M4 18V6"/>
+                      <path d="M12 18V6"/>
+                      <path d="M17.5 10.5c1.7-1 3.5 0 3.5 1.5a2 2 0 0 1-2 2"/>
+                      <path d="M17 17.5c2 1.5 4 .3 4-1.5a2 2 0 0 0-2-2"/>
+                    </svg>
+                  </button>
+                  <div class="divider"></div>
+                  <button onclick="formatText('bold')" class="toolbar-btn" title="Bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bold-icon lucide-bold">
+                      <path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('italic')" class="toolbar-btn" title="Italic">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-italic-icon lucide-italic">
+                      <line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/>
+                      <line x1="15" x2="9" y1="4" y2="20"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('underline')" class="toolbar-btn" title="Underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-underline-icon lucide-underline">
+                      <path d="M6 4v6a6 6 0 0 0 12 0V4"/><line x1="4" x2="20" y1="20" y2="20"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('strikeThrough')" class="toolbar-btn" title="Strikethrough">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-strikethrough-icon lucide-strikethrough">
+                      <path d="M16 4H9a3 3 0 0 0-2.83 4"/>
+                      <path d="M14 12a4 4 0 0 1 0 8H6"/>
+                      <line x1="4" x2="20" y1="12" y2="12"/>
+                    </svg>
+                  </button>
+                  <div class="divider"></div>
+                  <button onclick="formatText('justifyLeft')" class="toolbar-btn" title="Align Left">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4h14v2H3V4zm0 4h10v2H3V8zm0 4h14v2H3v-2zm0 4h10v2H3v-2z"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('justifyCenter')" class="toolbar-btn" title="Align Center">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4h14v2H3V4zm2 4h10v2H5V8zm-2 4h14v2H3v-2zm2 4h10v2H5v-2z"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('justifyRight')" class="toolbar-btn" title="Align Right">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4h14v2H3V4zm4 4h10v2H7V8zm-4 4h14v2H3v-2zm4 4h10v2H7v-2z"/>
+                    </svg>
+                  </button>
+                  <div class="divider"></div>
+                  <button onclick="formatText('insertUnorderedList')" class="toolbar-btn" title="Bullet List">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M4 4h2v2H4V4zm4 0h10v2H8V4zM4 9h2v2H4V9zm4 0h10v2H8V9zm-4 5h2v2H4v-2zm4 0h10v2H8v-2z"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('insertOrderedList')" class="toolbar-btn" title="Numbered List">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M5 4v3H4V4h1zM4 9h1v1H4v1h2V9.5L5 9h1V8H4v1zm1 4H4v1h1v.5H4v1h2v-2l-1-.5V13zM8 4h10v2H8V4zm0 5h10v2H8V9zm0 5h10v2H8v-2z"/>
+                    </svg>
+                  </button>
+                 </div>
               </div>
-              <div class="significant-container" contenteditable="true"></div>
+              <div class="significant-container" contenteditable="true" spellcheck="false"></div>
             </div>
 
             <div class="newest-card s-card">
               <div class="s-card-header">
                 <h3>최신화</h3>
-                <p class="s-card-description">최신화를 작성해 주세요.</p>
+                <!-- <p class="s-card-description">최신화를 작성해 주세요.</p> -->
+                <div class="newest-toolbar toolbar">
+                  <button onclick="formatText('h1')" class="toolbar-btn" title="H1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading1-icon lucide-heading-1">
+                      <path d="M4 12h8"/>
+                      <path d="M4 18V6"/>
+                      <path d="M12 18V6"/>
+                      <path d="m17 12 3-2v8"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('h2')" class="toolbar-btn" title="H2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading2-icon lucide-heading-2">
+                      <path d="M4 12h8"/>
+                      <path d="M4 18V6"/>
+                      <path d="M12 18V6"/>
+                      <path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('h3')" class="toolbar-btn" title="H3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading3-icon lucide-heading-3">
+                      <path d="M4 12h8"/>
+                      <path d="M4 18V6"/>
+                      <path d="M12 18V6"/>
+                      <path d="M17.5 10.5c1.7-1 3.5 0 3.5 1.5a2 2 0 0 1-2 2"/>
+                      <path d="M17 17.5c2 1.5 4 .3 4-1.5a2 2 0 0 0-2-2"/>
+                    </svg>
+                  </button>
+                  <div class="divider"></div>
+                  <button onclick="formatText('bold')" class="toolbar-btn" title="Bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bold-icon lucide-bold">
+                      <path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('italic')" class="toolbar-btn" title="Italic">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-italic-icon lucide-italic">
+                      <line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/>
+                      <line x1="15" x2="9" y1="4" y2="20"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('underline')" class="toolbar-btn" title="Underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-underline-icon lucide-underline">
+                      <path d="M6 4v6a6 6 0 0 0 12 0V4"/><line x1="4" x2="20" y1="20" y2="20"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('strikeThrough')" class="toolbar-btn" title="Strikethrough">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-strikethrough-icon lucide-strikethrough">
+                      <path d="M16 4H9a3 3 0 0 0-2.83 4"/>
+                      <path d="M14 12a4 4 0 0 1 0 8H6"/>
+                      <line x1="4" x2="20" y1="12" y2="12"/>
+                    </svg>
+                  </button>
+                  <div class="divider"></div>
+                  <button onclick="formatText('justifyLeft')" class="toolbar-btn" title="Align Left">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4h14v2H3V4zm0 4h10v2H3V8zm0 4h14v2H3v-2zm0 4h10v2H3v-2z"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('justifyCenter')" class="toolbar-btn" title="Align Center">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4h14v2H3V4zm2 4h10v2H5V8zm-2 4h14v2H3v-2zm2 4h10v2H5v-2z"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('justifyRight')" class="toolbar-btn" title="Align Right">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4h14v2H3V4zm4 4h10v2H7V8zm-4 4h14v2H3v-2zm4 4h10v2H7v-2z"/>
+                    </svg>
+                  </button>
+                  <div class="divider"></div>
+                  <button onclick="formatText('insertUnorderedList')" class="toolbar-btn" title="Bullet List">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M4 4h2v2H4V4zm4 0h10v2H8V4zM4 9h2v2H4V9zm4 0h10v2H8V9zm-4 5h2v2H4v-2zm4 0h10v2H8v-2z"/>
+                    </svg>
+                  </button>
+                  <button onclick="formatText('insertOrderedList')" class="toolbar-btn" title="Numbered List">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M5 4v3H4V4h1zM4 9h1v1H4v1h2V9.5L5 9h1V8H4v1zm1 4H4v1h1v.5H4v1h2v-2l-1-.5V13zM8 4h10v2H8V4zm0 5h10v2H8V9zm0 5h10v2H8v-2z"/>
+                    </svg>
+                  </button>
+                 </div>
               </div>
               <div class="newest-container" contenteditable="true"></div>
             </div>

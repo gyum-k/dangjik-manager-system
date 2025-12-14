@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulletin Board WYSIWYG Editor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f9fafb;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      color: #111827;
+    }
+    
+    .editor-wrapper {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    /* Toolbar Styles */
+    .toolbar {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.75rem;
+      background-color: #f9fafb;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+    
+    .toolbar-btn {
+      padding: 0.5rem;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .toolbar-btn:hover {
+      background-color: #e5e7eb;
+    }
+    
+    .toolbar-btn.active {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .toolbar-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .toolbar select,
+    .toolbar input[type="color"] {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      background-color: white;
+    }
+    
+    .toolbar input[type="color"] {
+      width: 40px;
+      height: 32px;
+      padding: 2px;
+    }
+    
+    .divider {
+      width: 1px;
+      height: 24px;
+      background-color: #d1d5db;
+      margin: 0 0.25rem;
+    }
+    
+    /* Editor Content Styles */
+    .editor-content {
+      min-height: 400px;
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 1.5rem;
+      background-color: white;
+    }
+    
+    .editor-content:focus {
+      outline: none;
+    }
+    
+    .editor-content img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .editor-content pre {
+      background-color: #1f2937;
+      color: #f3f4f6;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    
+    .editor-content h1 {
+      font-size: 2rem;
+      margin: 1rem 0;
+    }
+    
+    .editor-content h2 {
+      font-size: 1.5rem;
+      margin: 0.875rem 0;
+    }
+    
+    .editor-content h3 {
+      font-size: 1.25rem;
+      margin: 0.75rem 0;
+    }
+    
+    .editor-content p {
+      margin: 0.5rem 0;
+    }
+    
+    .editor-content ul,
+    .editor-content ol {
+      margin: 0.5rem 0;
+      padding-left: 2rem;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2563eb;
+    }
+    
+    .btn-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+    
+    .btn-success {
+      background-color: #10b981;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background-color: #059669;
+    }
+    
+    .btn-secondary {
+      background-color: #4b5563;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #374151;
+    }
+    
+    /* Output Area */
+    .output-area {
+      margin-top: 1.5rem;
+    }
+    
+    .output-area.hidden {
+      display: none;
+    }
+    
+    .output-area h3 {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+      color: #111827;
+    }
+    
+    .output-area pre {
+      background-color: #111827;
+      color: #10b981;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.875rem;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .output-area pre code {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bulletin Board Editor</h1>
+    
+    <div class="editor-wrapper">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <!-- Text Formatting -->
+        <button onclick="formatText('bold')" class="toolbar-btn" title="Bold">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M6 4v12h4.5c2.5 0 4.5-1.5 4.5-4 0-1.5-.8-2.8-2-3.5.8-.7 1.5-1.8 1.5-3 0-2.2-1.8-3.5-4-3.5H6zm2.5 2h2c1 0 1.5.5 1.5 1.5S11.5 9 10.5 9h-2V6zm0 5h2.5c1.2 0 2 .8 2 2s-.8 2-2 2h-2.5v-4z"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('italic')" class="toolbar-btn" title="Italic">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 4v2h2l-2 8H7v2h6v-2h-2l2-8h2V4z"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('underline')" class="toolbar-btn" title="Underline">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M6 3v7c0 2.2 1.8 4 4 4s4-1.8 4-4V3h-2v7c0 1.1-.9 2-2 2s-2-.9-2-2V3H6zm-2 14h12v2H4v-2z"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('strikeThrough')" class="toolbar-btn" title="Strikethrough">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 10h14v2H3v-2zm4-4c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v1h-2V6H9v2h6v2h-2v1c0 1.1-.9 2-2 2H9c-1.1 0-2-.9-2-2v-1h2v1h2v-2H7V6z"/>
+          </svg>
+        </button>
+        
+        <div class="divider"></div>
+        
+        <!-- Headings -->
+        <select onchange="formatText('formatBlock', this.value); this.selectedIndex=0;">
+          <option value="">Heading</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+          <option value="p">Paragraph</option>
+        </select>
+        
+        <!-- Font Size -->
+        <select onchange="formatText('fontSize', this.value); this.selectedIndex=0;">
+          <option value="">Size</option>
+          <option value="1">Small</option>
+          <option value="3">Normal</option>
+          <option value="5">Large</option>
+          <option value="7">Huge</option>
+        </select>
+        
+        <div class="divider"></div>
+        
+        <!-- Colors -->
+        <input type="color" onchange="formatText('foreColor', this.value)" title="Text Color">
+        <input type="color" onchange="formatText('backColor', this.value)" title="Background Color">
+        
+        <div class="divider"></div>
+        
+        <!-- Alignment -->
+        <button onclick="formatText('justifyLeft')" class="toolbar-btn" title="Align Left">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4h14v2H3V4zm0 4h10v2H3V8zm0 4h14v2H3v-2zm0 4h10v2H3v-2z"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('justifyCenter')" class="toolbar-btn" title="Align Center">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4h14v2H3V4zm2 4h10v2H5V8zm-2 4h14v2H3v-2zm2 4h10v2H5v-2z"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('justifyRight')" class="toolbar-btn" title="Align Right">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4h14v2H3V4zm4 4h10v2H7V8zm-4 4h14v2H3v-2zm4 4h10v2H7v-2z"/>
+          </svg>
+        </button>
+        
+        <div class="divider"></div>
+        
+        <!-- Lists -->
+        <button onclick="formatText('insertUnorderedList')" class="toolbar-btn" title="Bullet List">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 4h2v2H4V4zm4 0h10v2H8V4zM4 9h2v2H4V9zm4 0h10v2H8V9zm-4 5h2v2H4v-2zm4 0h10v2H8v-2z"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('insertOrderedList')" class="toolbar-btn" title="Numbered List">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M5 4v3H4V4h1zM4 9h1v1H4v1h2V9.5L5 9h1V8H4v1zm1 4H4v1h1v.5H4v1h2v-2l-1-.5V13zM8 4h10v2H8V4zm0 5h10v2H8V9zm0 5h10v2H8v-2z"/>
+          </svg>
+        </button>
+        
+        <div class="divider"></div>
+        
+        <!-- Links and Images -->
+        <button onclick="insertLink()" class="toolbar-btn" title="Insert Link">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"/>
+          </svg>
+        </button>
+        
+        <button onclick="insertImage()" class="toolbar-btn" title="Insert Image">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        
+        <div class="divider"></div>
+        
+        <!-- Undo/Redo -->
+        <button onclick="formatText('undo')" class="toolbar-btn" title="Undo">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        
+        <button onclick="formatText('redo')" class="toolbar-btn" title="Redo">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10.293 14.707a1 1 0 001.414 0l4-4a1 1 0 000-1.414l-4-4a1 1 0 10-1.414 1.414L12.586 9H5a1 1 0 100 2h7.586l-2.293 2.293a1 1 0 000 1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        
+        <div class="divider"></div>
+        
+        <!-- Clear Formatting -->
+        <button onclick="formatText('removeFormat')" class="toolbar-btn" title="Clear Formatting">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 110-2h1V4H6v12h1a1 1 0 110 2H4a1 1 0 110-2V4z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Editor Content -->
+      <div 
+        id="editor" 
+        class="editor-content"
+        contenteditable="true"
+        spellcheck="true"
+      >
+        <h2>Welcome to the Bulletin Board Editor!</h2>
+        <p>Start typing your bulletin board post here. Use the toolbar above to format your text.</p>
+        <ul>
+          <li>Add bullet points</li>
+          <li>Format text with <strong>bold</strong>, <em>italic</em>, or <u>underline</u></li>
+          <li>Insert links and images</li>
+        </ul>
+        <p>You can also change colors, alignment, and more!</p>
+      </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button onclick="getHTML()" class="btn btn-primary">
+        Get HTML
+      </button>
+      <button onclick="clearEditor()" class="btn btn-danger">
+        Clear All
+      </button>
+      <button onclick="savePost()" class="btn btn-success">
+        Save Post
+      </button>
+    </div>
+    
+    <!-- Output Area -->
+    <div id="output" class="output-area hidden">
+      <h3>HTML Output:</h3>
+      <pre><code id="htmlOutput"></code></pre>
+      <button onclick="copyToClipboard()" class="btn btn-secondary" style="margin-top: 0.75rem;">
+        Copy to Clipboard
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const editor = document.getElementById('editor');
+    
+    // Format text function
+    function formatText(command, value = null) {
+      document.execCommand(command, false, value);
+      editor.focus();
+    }
+    
+    // Insert link
+    function insertLink() {
+      const url = prompt('Enter the URL:');
+      if (url) {
+        const selection = window.getSelection();
+        if (selection.toString()) {
+          formatText('createLink', url);
+        } else {
+          const linkText = prompt('Enter link text:');
+          if (linkText) {
+            const link = `<a href="${url}" target="_blank">${linkText}</a>`;
+            formatText('insertHTML', link);
+          }
+        }
+      }
+    }
+    
+    // Insert image
+    function insertImage() {
+      const url = prompt('Enter image URL:');
+      if (url) {
+        const img = `<img src="${url}" alt="Image" style="max-width: 100%; height: auto; margin: 10px 0;">`;
+        formatText('insertHTML', img);
+      }
+    }
+    
+    // Get HTML content
+    function getHTML() {
+      const html = editor.innerHTML;
+      document.getElementById('htmlOutput').textContent = html;
+      document.getElementById('output').classList.remove('hidden');
+    }
+    
+    // Clear editor
+    function clearEditor() {
+      if (confirm('Are you sure you want to clear all content?')) {
+        editor.innerHTML = '<p>Start typing here...</p>';
+        editor.focus();
+      }
+    }
+    
+    // Save post (simulated)
+    function savePost() {
+      const content = editor.innerHTML;
+      const timestamp = new Date().toLocaleString();
+      
+      // Save to localStorage for demo purposes
+      const posts = JSON.parse(localStorage.getItem('bulletinPosts') || '[]');
+      posts.push({
+        content: content,
+        timestamp: timestamp
+      });
+      localStorage.setItem('bulletinPosts', JSON.stringify(posts));
+      
+      alert('Post saved successfully!\n\nTimestamp: ' + timestamp);
+    }
+    
+    // Copy to clipboard
+    function copyToClipboard() {
+      const text = document.getElementById('htmlOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('HTML copied to clipboard!');
+      });
+    }
+    
+    // Update toolbar button states
+    editor.addEventListener('mouseup', updateToolbar);
+    editor.addEventListener('keyup', updateToolbar);
+    
+    function updateToolbar() {
+      const commands = ['bold', 'italic', 'underline', 'strikeThrough'];
+      commands.forEach(command => {
+        const isActive = document.queryCommandState(command);
+        const button = document.querySelector(`button[onclick*="${command}"]`);
+        if (button) {
+          if (isActive) {
+            button.classList.add('active');
+          } else {
+            button.classList.remove('active');
+          }
+        }
+      });
+    }
+    
+    // Prevent default paste behavior and clean up pasted content
+    editor.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const text = e.clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, text);
+    });
+  </script>
+</body>
+</html>

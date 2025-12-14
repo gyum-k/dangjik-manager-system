@@ -18,7 +18,26 @@ function currentTime() {
   document.querySelector(".current-date").innerText = `${year}-${month}-${day} ${weekday}`;
 }
 
+// 특이사항 초기화 구현
+function initSignificant() {
+  const savedSignificant = localStorage.getItem('dms.significant');
+
+  if (!savedSignificant) {
+    localStorage.setItem("dms.significant", '');
+  }
+}
+
+// 특이사항 텍스트 포맷 구현
+function formatText(cmd, value = null) {
+  const significantEditor = document.querySelector('.significant-container');
+
+  significantEditor.focus();
+  document.execCommand(cmd, false, value);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   currentTime(); // 최초 실행
   setInterval(currentTime, 1000); // 1초마다 갱신
+
+  initSignificant()
 })
