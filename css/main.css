@@ -194,6 +194,13 @@
   justify-content: center;
 }
 
+@media (max-width: 1200px) {
+  #main-content .content .d-grid,
+  #main-content .content .s-grid {
+    grid-template-columns: 1fr 1fr; /* 2열 */
+  }
+}
+
 @media (max-width: 768px) {
   #main-content .content .d-grid,
   #main-content .content .s-grid {

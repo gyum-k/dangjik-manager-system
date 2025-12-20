@@ -16,28 +16,43 @@ function currentTime() {
 
   document.querySelector(".current-time").innerText = `${hour}:${min}:${sec}`;
   document.querySelector(".current-date").innerText = `${year}-${month}-${day} ${weekday}`;
+
+  // 딜레이 계산
+  const delay = 1000 - now.getMilliseconds();
+  setTimeout(currentTime, delay);
 }
 
-// 특이사항 초기화 구현
-function initSignificant() {
-  const savedSignificant = localStorage.getItem('dms.significant');
+// 오늘의 명언
+function todayMotto() {
+  let today = new Date().toISOString().split("T")[0];
+  let savedMotto = localStorage.getItem("dms.motto");
+  let parseMotto = savedMotto && JSON.parse(savedMotto);
 
-  if (!savedSignificant) {
-    localStorage.setItem("dms.significant", '');
+  if (!parseMotto || parseMotto.date !== today) {
+    const random = motto_data[Math.floor(Math.random() * motto_data.length)];
+
+    parseMotto = {
+      date: today,
+      quote_text: random.quote_text,
+      quote_author: random.quote_author
+    };
+
+    localStorage.setItem("dms.motto", JSON.stringify(parseMotto));
   }
+
+  document.querySelector(".quote-text").innerText = `${parseMotto.quote_text}`;
+  document.querySelector(".quote-author").innerText = `${parseMotto.quote_author}`;
 }
 
 // 특이사항 텍스트 포맷 구현
 function formatText(cmd, value = null) {
-  const significantEditor = document.querySelector('.significant-container');
+  const significantEditor = document.querySelector(".significant-container");
 
   significantEditor.focus();
   document.execCommand(cmd, false, value);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  currentTime(); // 최초 실행
-  setInterval(currentTime, 1000); // 1초마다 갱신
-
-  initSignificant()
+  currentTime(); // 현재 시각
+  todayMotto(); // 오늘의 명언
 })
