@@ -25,34 +25,74 @@ function currentTime() {
 // 오늘의 명언
 function todayMotto() {
   let today = new Date().toISOString().split("T")[0];
-  let savedMotto = localStorage.getItem("dms.motto");
-  let parseMotto = savedMotto && JSON.parse(savedMotto);
+  let savedMotto = JSON.parse(localStorage.getItem("dms.motto") || "null");
 
-  if (!parseMotto || parseMotto.date !== today) {
+  if (!savedMotto || savedMotto.date !== today) {
     const random = motto_data[Math.floor(Math.random() * motto_data.length)];
 
-    parseMotto = {
+    savedMotto = {
       date: today,
       quote_text: random.quote_text,
       quote_author: random.quote_author
     };
 
-    localStorage.setItem("dms.motto", JSON.stringify(parseMotto));
+    localStorage.setItem("dms.motto", JSON.stringify(savedMotto));
   }
 
-  document.querySelector(".quote-text").innerText = `${parseMotto.quote_text}`;
-  document.querySelector(".quote-author").innerText = `${parseMotto.quote_author}`;
+  document.querySelector(".quote-text").innerText = `${savedMotto.quote_text}`;
+  document.querySelector(".quote-author").innerText = `${savedMotto.quote_author}`;
 }
-
-// 특이사항 텍스트 포맷 구현
-function formatText(cmd, value = null) {
+// 특이사항 초기화
+function initSignificantEditor() {
+  const savedSignificant = localStorage.getItem("dms.significant-editor");
   const significantEditor = document.querySelector(".significant-container");
 
-  significantEditor.focus();
+  if (savedSignificant) {
+    significantEditor.innerHTML = savedSignificant;
+  }
+
+  significantEditor.addEventListener("input", () => {
+    saveEditor("significant");
+  });
+}
+
+// 최신화 초기화
+function initNewestEditor() {
+  const savedNewest = localStorage.getItem("dms.newest-editor");
+  const newestEditor = document.querySelector(".newest-container");
+
+  if (savedNewest) {
+    newestEditor.innerHTML = savedNewest;
+  }
+
+  newestEditor.addEventListener("input", () => {
+    saveEditor("newest");
+  });
+}
+
+// WYSIWYG 에디터 텍스트 포맷 구현
+function formatText(type, cmd, value = null) {
+  const significantEditor = document.querySelector(".significant-container");
+  const newestEditor = document.querySelector(".newest-container");
+
+  if (type === 'significant') significantEditor.focus();
+  if (type === 'newest') newestEditor.focus();
+
   document.execCommand(cmd, false, value);
+}
+
+// WYSIWYG 에디터 저장
+function saveEditor(type) {
+  const significantEditor = document.querySelector(".significant-container");
+  const newestEditor = document.querySelector(".newest-container");
+  const editor = type === "significant" ? significantEditor : newestEditor;
+
+  localStorage.setItem(`dms.${type}-editor`, editor.innerHTML);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   currentTime(); // 현재 시각
   todayMotto(); // 오늘의 명언
+  initSignificantEditor(); // 특이사항 초기화
+  initNewestEditor(); // 최신화 초기화
 })
