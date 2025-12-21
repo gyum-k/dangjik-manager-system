@@ -176,12 +176,9 @@
           <div class="checklist-card s-card">
             <div class="s-card-header">
               <h3>당직 체크리스트</h3>
-              <p class="s-card-description">당직 체크리스트 입니다.</p>
+              <!-- <p class="s-card-description">당직 체크리스트 입니다.</p> -->
             </div>
-            <div id="activityList"></div>
-            <div class="s-card-footer">
-              <button class="btn btn-full">View All Activity</button>
-            </div>
+            <div id="checklist-container"></div>
           </div>
         </main>
       </div>
@@ -198,7 +195,7 @@
       { action: 'Bug report submitted', time: '3 hours ago' }
     ];
 
-    const activityList = document.getElementById('activityList');
+    const activityList = document.getElementById('checklist-container');
     activities.forEach(activity => {
       const item = document.createElement('div');
       item.className = 'activity-item';

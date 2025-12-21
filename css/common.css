@@ -355,6 +355,7 @@ body {
   font-size: 0.875rem;
   transition: background 0.2s;
   text-align: left;
+  text-decoration: none;
 }
 
 #site-sidebar .sidebar-nav li .nav-button:hover {

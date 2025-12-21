@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>체크리스트 + JSON 출력</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f6f8;
+    }
+
+    .box {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .item-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .item-row input {
+      flex: 1;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .desc {
+      font-size: 13px;
+      color: #555;
+    }
+
+    pre {
+      background: #111;
+      color: #0f0;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 입력 -->
+  <div class="box">
+    <h2>체크리스트 추가</h2>
+
+    <input id="category" placeholder="구분" />
+    <input id="title" placeholder="제목" />
+
+    <h4>체크 항목</h4>
+    <div id="items"></div>
+
+    <button onclick="addItem()">➕ 항목 추가</button>
+    <button onclick="addChecklist()">✅ 등록</button>
+  </div>
+
+  <!-- 체크리스트 출력 -->
+  <div class="box">
+    <h2>체크리스트 화면</h2>
+    <div id="checklistContainer"></div>
+  </div>
+
+  <!-- JSON 출력 -->
+  <div class="box">
+    <h2>JSON 데이터</h2>
+    <pre id="jsonOutput"></pre>
+  </div>
+
+<script>
+  const itemsEl = document.getElementById("items");
+  const checklistData = [];
+
+  function addItem() {
+    const div = document.createElement("div");
+    div.className = "item-row";
+    div.innerHTML = `
+      <input placeholder="항목명" />
+      <input placeholder="설명" />
+    `;
+    itemsEl.appendChild(div);
+  }
+
+  function addChecklist() {
+    const category = document.getElementById("category").value;
+    const title = document.getElementById("title").value;
+    const itemRows = document.querySelectorAll(".item-row");
+
+    if (!category || !title || itemRows.length === 0) {
+      alert("모든 값을 입력하세요.");
+      return;
+    }
+
+    const items = [];
+
+    itemRows.forEach(row => {
+      const name = row.children[0].value;
+      const desc = row.children[1].value;
+
+      if (name) {
+        items.push({
+          text: name,
+          description: desc,
+          checked: false
+        });
+      }
+    });
+
+    const checklist = {
+      category,
+      title,
+      items
+    };
+
+    checklistData.push(checklist);
+
+    renderChecklist(checklist);
+    renderJSON();
+
+    // 초기화
+    document.getElementById("category").value = "";
+    document.getElementById("title").value = "";
+    itemsEl.innerHTML = "";
+  }
+
+  function renderChecklist(data) {
+    const div = document.createElement("div");
+
+    let html = `<h3>[${data.category}] ${data.title}</h3>`;
+
+    data.items.forEach(item => {
+      html += `
+        <div class="check-item">
+          <input type="checkbox" />
+          <div>
+            <strong>${item.text}</strong>
+            <div class="desc">${item.description}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    div.innerHTML = html;
+    document.getElementById("checklistContainer").appendChild(div);
+  }
+
+  function renderJSON() {
+    document.getElementById("jsonOutput").textContent =
+      JSON.stringify(checklistData, null, 2);
+  }
+</script>
+
+</body>
+</html>

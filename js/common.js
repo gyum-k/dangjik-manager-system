@@ -36,10 +36,10 @@ function initSidebar() {
   const sidebarHTML = sidebar_data.map((x) => {
     return `
       <li data-key="${x.id}">
-        <button class="nav-button" onclick="location.href='${x.link}'">
+        <a class="nav-button" href="${x.url}" ${x.newTab ? 'target="_blank" rel="noopener"' : ""}>
           <img class="icon" src="${x.icon}" alt="${x.label} 아이콘" />
           <span class="title">${x.label}</span>
-        </button
+        </a
       </li>
     `;
   }).join("");
